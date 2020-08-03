@@ -22,3 +22,15 @@ To run:
 ```bash
 overmind s
 ```
+
+To restart just the api:
+
+```bash
+overmind r api
+```
+
+To restart just the web app:
+
+```bash
+overmind r app
+```
