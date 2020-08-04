@@ -324,6 +324,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@golevelup/ts-jest@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@golevelup/ts-jest/-/ts-jest-0.3.0.tgz#7283286304cf97b17360e78e3ad1d66e719c432f"
+  integrity sha512-/PRdR75+w3slJ/kye8TZqhVCaKymd8xpKChk2CETtsqrqbCCtmIq2ujMc8j7+vhI42umcgDUyyYpVHrnIDsIcw==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -609,7 +614,7 @@
     "@angular-devkit/schematics" "9.1.7"
     fs-extra "9.0.0"
 
-"@nestjs/testing@^7.0.0":
+"@nestjs/testing@^7.4.2":
   version "7.4.2"
   resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-7.4.2.tgz#6acba60c89aa4306244159d30477f943404deac9"
   integrity sha512-wnb0ApdTrJ03sg/1YiNNjjDIdf/f0izOea/5Bx9goKEJQPf8IW5AlV4yK9FB1uotED0mcjzp0awqzbfHfipP7w==

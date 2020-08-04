@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
+import { User } from './users/user.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import configuration from './config/configuration';
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres' as 'postgres',
         url: configService.get('database.url'),
+        entities: [User],
       }),
     }),
   ],
