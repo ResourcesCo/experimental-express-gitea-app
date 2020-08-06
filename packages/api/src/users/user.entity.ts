@@ -1,19 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn()
-  pk: number;
-
-  @Column()
+  @PrimaryColumn()
   id: string;
 
   @Column()
+  email: string;
+
+  @Column({ name: 'password_digest' })
+  passwordDigest: string;
+
+  @Column({ name: 'first_name' })
   firstName: string;
 
-  @Column()
+  @Column({ name: 'last_name' })
   lastName: string;
-
-  @Column({ default: true })
-  isActive: boolean;
 }

@@ -5,6 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
 import { User } from './users/user.entity';
+import { UsersModule } from './users/users.module';
+import { Connection } from 'typeorm';
 
 @Module({
   imports: [
@@ -20,8 +22,11 @@ import { User } from './users/user.entity';
         entities: [User],
       }),
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private connection: Connection) {}
+}

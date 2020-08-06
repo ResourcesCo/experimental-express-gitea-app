@@ -1,23 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { getDatabaseImportsForEntities } from '../testing';
 
-describe('UsersController', () => {
-  let usersController: UsersController;
+describe('UsersService', () => {
   let usersService: UsersService;
   let module: TestingModule;
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
       imports: [...getDatabaseImportsForEntities([User])],
-      controllers: [UsersController],
       providers: [UsersService],
     }).compile();
 
-    usersService = module.get<UsersService>(UsersService);
-    usersController = module.get<UsersController>(UsersController);
+    usersService = await module.get<UsersService>(UsersService);
   });
 
   afterAll(async () => {
@@ -26,9 +22,7 @@ describe('UsersController', () => {
 
   describe('findAll', () => {
     it('should return an array of users', async () => {
-      jest.spyOn(usersService, 'findAll').mockImplementation(async () => []);
-
-      expect(await usersController.findAll()).toEqual([]);
+      expect(await usersService.findAll()).toEqual([]);
     });
   });
 });
