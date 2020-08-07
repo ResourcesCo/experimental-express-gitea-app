@@ -27,9 +27,12 @@ export class User {
   lastName: string;
 
   @BeforeInsert()
-  setId() {
+  setDefaults() {
     if (!this.id) {
       this.id = nanoid();
+    }
+    if (!this.userAuthId) {
+      this.userAuthId = nanoid();
     }
   }
 }

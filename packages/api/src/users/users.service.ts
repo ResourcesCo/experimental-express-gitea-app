@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDto } from './dto';
+import { CreateUserDto, LoginUserDto } from './dto';
 import { UserData } from './user.interface';
+import { UnauthorizedException } from '@nestjs/common';
 import * as argon2 from 'argon2';
 
 @Injectable()
@@ -28,6 +29,25 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
     };
+  }
+
+  async login(dto: LoginUserDto): Promise<UserData> {
+    const user = await this.usersRepository.findOne({ email: dto.email });
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    const verified = await argon2.verify(user.passwordDigest, dto.password);
+    if (verified === true) {
+      const { id, email, firstName, lastName } = user;
+      return {
+        id,
+        email,
+        firstName,
+        lastName,
+      };
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 
   findAll(): Promise<User[]> {
