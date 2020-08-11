@@ -105,3 +105,6 @@ dist
 
 # Overmind
 .overmind.sock
+
+# .env
+.env.local

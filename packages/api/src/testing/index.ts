@@ -2,11 +2,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
 
+export function getConfigImport() {
+  return ConfigModule.forRoot({
+    load: [configuration],
+  });
+}
+
 export function getDatabaseImportsForEntities(entities) {
   return [
-    ConfigModule.forRoot({
-      load: [configuration],
-    }),
+    getConfigImport(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

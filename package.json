@@ -4,10 +4,5 @@
   "devDependencies": {
     "lerna": "^3.22.1"
   },
-  "dependencies": {
-    "@nestjs/passport": "^7.1.0",
-    "@types/passport-local": "^1.0.33",
-    "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
-  }
+  "dependencies": {}
 }
