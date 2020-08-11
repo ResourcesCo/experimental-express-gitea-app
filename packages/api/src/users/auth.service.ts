@@ -41,10 +41,12 @@ export class AuthService {
     userAuthId: string;
     type: 'refresh' | 'access';
   }) {
+    const iatms = Date.now();
     const header = { alg: 'RS256', typ: 'JWT' };
     const payload = {
       sub: this.stringifySubject({ userId, userAuthId }),
-      iat: Math.floor(Date.now() / 1000),
+      iat: Math.floor(iatms / 1000),
+      iatms,
       aud: type,
     };
     const encodedHeader = encode(JSON.stringify(header));
@@ -69,13 +71,17 @@ export class AuthService {
       throw new InvalidTokenException('Signature verification failed');
     }
 
-    const { sub, iat } = payload;
+    const { sub, iat, iatms } = payload;
+    if (Math.floor(iatms / 1000) !== iat) {
+      throw new InvalidTokenException(
+        'Mismatch between iat and iatms (milliseconds)',
+      );
+    }
     const { userId, userAuthId } = this.parseSubject(sub);
-    // TODO: check that token isn't expired
     return {
       userId,
       userAuthId,
-      issuedAt: new Date(iat * 1000),
+      issuedAt: new Date(iatms),
     };
   }
 }

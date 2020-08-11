@@ -22,10 +22,10 @@ describe('AuthService', () => {
   });
 
   describe('creating and verifying access token', () => {
-    it('should create a token', async () => {
+    it('should create a token', () => {
       const userId = nanoid();
       const userAuthId = nanoid();
-      const token = await authService.createToken({
+      const token = authService.createToken({
         userId,
         userAuthId,
         type: 'access',
@@ -35,7 +35,7 @@ describe('AuthService', () => {
       expect(token.split('.').length).toEqual(3);
     });
 
-    function createToken() {
+    it('should create and read token', () => {
       const userId = nanoid();
       const userAuthId = nanoid();
       const token = authService.createToken({
@@ -43,17 +43,12 @@ describe('AuthService', () => {
         userAuthId,
         type: 'access',
       });
-      return { userId, userAuthId, token };
-    }
-
-    it('should create and read token', () => {
-      const { userId, userAuthId, token } = createToken();
       const result = authService.readToken(token);
       expect(result).toBeTruthy();
       expect(result.userId).toEqual(userId);
       expect(result.userAuthId).toEqual(userAuthId);
       const difference = Math.abs(Date.now() - result.issuedAt.valueOf());
-      expect(difference).toBeLessThan(1000);
+      expect(difference).toBeLessThanOrEqual(100);
     });
   });
 });

@@ -29,19 +29,19 @@ function getTemporaryKeys() {
 
 export default () => {
   let auth;
-  if (process.env.PUBLIC_KEY && process.env.PRIVATE_KEY) {
+  if (
+    ['development', 'test'].includes(process.env.NODE_ENV) &&
+    process.env.PUBLIC_KEY &&
+    process.env.PRIVATE_KEY
+  ) {
     auth = {
       publicKey: process.env.PUBLIC_KEY,
       privateKey: process.env.PRIVATE_KEY,
     };
   } else {
-    console.warn(
-      'Using temporary PUBLIC_KEY and PRIVATE_KEY, stored in config/temporary-keys.json.\n' +
-        'Be sure to set these in production.',
-    );
     auth = getTemporaryKeys();
   }
-  if (!(auth.publicKey && auth.privateKey)) {
+  if (!(auth && auth.publicKey && auth.privateKey)) {
     throw new Error('Missing auth keys');
   }
   return {
