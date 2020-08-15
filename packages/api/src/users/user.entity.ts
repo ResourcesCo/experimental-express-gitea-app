@@ -1,5 +1,12 @@
-import { Entity, PrimaryColumn, Column, BeforeInsert } from 'typeorm';
+import {
+  Entity,
+  PrimaryColumn,
+  Column,
+  BeforeInsert,
+  OneToMany,
+} from 'typeorm';
 import { nanoid } from 'nanoid';
+import { Token } from './tokens/token.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -31,6 +38,12 @@ export class User {
 
   @Column({ name: 'is_active', default: 'false' })
   isActive: boolean;
+
+  @OneToMany(
+    type => Token,
+    token => token.user,
+  )
+  tokens: Token[];
 
   @BeforeInsert()
   setDefaults() {

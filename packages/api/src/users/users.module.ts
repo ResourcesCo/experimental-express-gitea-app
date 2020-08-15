@@ -5,9 +5,10 @@ import { AuthService } from './auth.service';
 import { UsersController } from './users.controller';
 import { User } from './user.entity';
 import { ConfigService } from '@nestjs/config';
+import { TokensModule } from './tokens/tokens.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), TokensModule],
   providers: [ConfigService, UsersService, AuthService],
   controllers: [UsersController],
 })

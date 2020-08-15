@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
+import { Token } from './tokens/token.entity';
 import { Repository, getRepository, getConnectionManager } from 'typeorm';
 import { getDatabaseImportsForEntities } from '../testing';
 import { UnauthorizedException } from '@nestjs/common';
@@ -14,7 +15,7 @@ describe('UsersService', () => {
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
-      imports: [...getDatabaseImportsForEntities([User])],
+      imports: [...getDatabaseImportsForEntities([User, Token])],
       providers: [AuthService, UsersService],
     }).compile();
 

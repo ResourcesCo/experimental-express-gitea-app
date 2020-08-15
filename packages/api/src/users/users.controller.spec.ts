@@ -3,6 +3,7 @@ import { UsersController } from './users.controller';
 import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
+import { Token } from './tokens/token.entity';
 import { getDatabaseImportsForEntities } from '../testing';
 
 describe('UsersController', () => {
@@ -12,7 +13,7 @@ describe('UsersController', () => {
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
-      imports: [...getDatabaseImportsForEntities([User])],
+      imports: [...getDatabaseImportsForEntities([User, Token])],
       controllers: [UsersController],
       providers: [AuthService, UsersService],
     }).compile();

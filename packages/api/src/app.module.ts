@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
 import { User } from './users/user.entity';
+import { Token } from './users/tokens/token.entity';
 import { UsersModule } from './users/users.module';
 import { Connection } from 'typeorm';
 import { UsersController } from './users/users.controller';
@@ -28,7 +29,7 @@ import { UsersController } from './users/users.controller';
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres' as 'postgres',
         url: configService.get('database.url'),
-        entities: [User],
+        entities: [User, Token],
       }),
     }),
     UsersModule,

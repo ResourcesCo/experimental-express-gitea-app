@@ -13,5 +13,7 @@ export class addActiveToUsers1597260032072 implements MigrationInterface {
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropColumn('users', 'is_active');
+  }
 }
