@@ -25,11 +25,20 @@ describe('UsersController', () => {
     await module.close();
   });
 
-  describe('findAll', () => {
-    it('should return an array of users', async () => {
-      jest.spyOn(usersService, 'findAll').mockImplementation(async () => []);
+  describe('signup', () => {
+    it('should call signup', async () => {
+      const spy = jest.spyOn(usersService, 'signUp');
 
-      expect(await usersController.findAll()).toEqual([]);
+      try {
+        await usersController.signUp({
+          signupCode: 'kittens',
+          email: 'test@example.com',
+          password: 'testPassword',
+          firstName: 'Test',
+          lastName: 'User',
+        });
+      } catch {}
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

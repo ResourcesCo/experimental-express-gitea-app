@@ -57,5 +57,9 @@ export default () => {
       migrations: ['src/migrations/*.ts'],
     },
     auth,
+    signup: {
+      open: process.env.SIGNUP_OPEN === 'true',
+      signupCode: process.env.SIGNUP_CODE,
+    },
   };
 };

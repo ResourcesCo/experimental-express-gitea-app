@@ -4,16 +4,30 @@ import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
 import { User } from './user.entity';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto, LoginResponseDto } from './dto';
+import { ConfigService } from '@nestjs/config';
+import {
+  CreateUserDto,
+  SignupDto,
+  LoginUserDto,
+  SignupResponseDto,
+  LoginResponseDto,
+} from './dto';
 import { UserData } from './user.interface';
 
 @Injectable()
 export class UsersService {
+  private signupOpen: boolean;
+  private signupCode: string;
+
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private authService: AuthService,
-  ) {}
+    configService: ConfigService,
+  ) {
+    this.signupOpen = configService.get('signup.open');
+    this.signupCode = configService.get('signup.signupCode');
+  }
 
   async create(dto: CreateUserDto): Promise<UserData> {
     const { id, email, password, firstName, lastName, isActive } = dto;
@@ -32,6 +46,21 @@ export class UsersService {
       lastName: user.lastName,
       isActive: user.isActive,
     };
+  }
+
+  async signUp(dto: SignupDto): Promise<SignupResponseDto> {
+    const { signupCode, firstName, lastName, email, password } = dto;
+    if (!this.signupOpen && signupCode !== this.signupCode) {
+      throw new UnauthorizedException('invalid signup code');
+    }
+    const user = await this.create({
+      firstName,
+      lastName,
+      email,
+      password,
+      isActive: true,
+    });
+    return await this.login({ email, password });
   }
 
   async login(dto: LoginUserDto): Promise<LoginResponseDto> {
@@ -69,14 +98,6 @@ export class UsersService {
     } else {
       throw new UnauthorizedException();
     }
-  }
-
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find();
-  }
-
-  findOne(id: string): Promise<User> {
-    return this.usersRepository.findOne(id);
   }
 
   async remove(id: string): Promise<void> {

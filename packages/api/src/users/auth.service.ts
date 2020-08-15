@@ -15,7 +15,7 @@ export class AuthService {
   private publicKey: KeyObject;
   private privateKey: KeyObject;
 
-  constructor(private configService: ConfigService) {
+  constructor(configService: ConfigService) {
     this.publicKey = createPublicKey(configService.get('auth.publicKey'));
     this.privateKey = createPrivateKey(configService.get('auth.privateKey'));
     if (!(this.publicKey && this.privateKey)) {

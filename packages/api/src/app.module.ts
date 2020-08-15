@@ -13,6 +13,14 @@ import { UsersController } from './users/users.controller';
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
+      ...(['development', 'test'].includes(process.env.NODE_ENV)
+        ? {
+            envFilePath: [
+              `.env.${process.env.NODE_ENV}.local`,
+              `.env.${process.env.NODE_ENV}`,
+            ],
+          }
+        : { ignoreEnvFile: true }),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

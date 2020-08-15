@@ -117,4 +117,33 @@ describe('UsersService', () => {
       expect(err).toBeInstanceOf(UnauthorizedException);
     });
   });
+
+  describe('signup', () => {
+    it('should sign up a user', async () => {
+      const userData = await usersService.signUp({
+        signupCode: 'openSESAME',
+        email: 'test@example.com',
+        password: 'testPassword',
+        firstName: 'Test',
+        lastName: 'User',
+      });
+      expect(userData.accessToken).toBeTruthy();
+    });
+
+    it('should fail to sign up with an invalid auth code', async () => {
+      let err;
+      try {
+        const userData = await usersService.signUp({
+          signupCode: 'kittens',
+          email: 'test@example.com',
+          password: 'testPassword',
+          firstName: 'Test',
+          lastName: 'User',
+        });
+      } catch (e) {
+        err = e;
+      }
+      expect(err).toBeInstanceOf(UnauthorizedException);
+    });
+  });
 });

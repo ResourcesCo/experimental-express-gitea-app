@@ -5,6 +5,7 @@ import configuration from '../config/configuration';
 export function getConfigImport() {
   return ConfigModule.forRoot({
     load: [configuration],
+    envFilePath: [`.env.test.local`, `.env.test`],
   });
 }
 
