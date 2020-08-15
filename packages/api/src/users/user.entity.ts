@@ -26,6 +26,12 @@ export class User {
   @Column({ name: 'last_name' })
   lastName: string;
 
+  @Column({ default: 'user' })
+  role: string;
+
+  @Column({ name: 'is_active', default: 'false' })
+  isActive: boolean;
+
   @BeforeInsert()
   setDefaults() {
     if (!this.id) {

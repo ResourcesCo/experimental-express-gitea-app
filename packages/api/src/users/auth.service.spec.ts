@@ -47,6 +47,7 @@ describe('AuthService', () => {
       expect(result).toBeTruthy();
       expect(result.userId).toEqual(userId);
       expect(result.userAuthId).toEqual(userAuthId);
+      expect(result.type).toEqual('access');
       const difference = Math.abs(Date.now() - result.issuedAt.valueOf());
       expect(difference).toBeLessThanOrEqual(100);
     });

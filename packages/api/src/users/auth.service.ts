@@ -59,7 +59,12 @@ export class AuthService {
 
   readToken(
     token: string,
-  ): { userId: string; userAuthId: string; issuedAt: Date } {
+  ): {
+    userId: string;
+    userAuthId: string;
+    issuedAt: Date;
+    type: 'access' | 'refresh';
+  } {
     const [encodedHeader, encodedPayload, encodedSignature] = token.split('.');
     const header = JSON.parse(decode(encodedHeader));
     const payload = JSON.parse(decode(encodedPayload));
@@ -71,7 +76,7 @@ export class AuthService {
       throw new InvalidTokenException('Signature verification failed');
     }
 
-    const { sub, iat, iatms } = payload;
+    const { sub, iat, iatms, aud } = payload;
     if (Math.floor(iatms / 1000) !== iat) {
       throw new InvalidTokenException(
         'Mismatch between iat and iatms (milliseconds)',
@@ -82,6 +87,7 @@ export class AuthService {
       userId,
       userAuthId,
       issuedAt: new Date(iatms),
+      type: aud,
     };
   }
 }

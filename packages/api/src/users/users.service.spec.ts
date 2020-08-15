@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { Repository, getRepository, getConnectionManager } from 'typeorm';
@@ -7,16 +8,18 @@ import { UnauthorizedException } from '@nestjs/common';
 
 describe('UsersService', () => {
   let usersService: UsersService;
+  let authService: AuthService;
   let module: TestingModule;
   let repository: Repository<User>;
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
       imports: [...getDatabaseImportsForEntities([User])],
-      providers: [UsersService],
+      providers: [AuthService, UsersService],
     }).compile();
 
     usersService = await module.get<UsersService>(UsersService);
+    authService = await module.get<AuthService>(AuthService);
     repository = getRepository(User);
   });
 
@@ -38,6 +41,7 @@ describe('UsersService', () => {
         password: 'testPassword',
         firstName: 'Test',
         lastName: 'User',
+        isActive: true,
       });
 
       // expect random id to have been created
@@ -52,6 +56,7 @@ describe('UsersService', () => {
         password: 'testPassword',
         firstName: 'Test',
         lastName: 'User',
+        isActive: true,
       });
       expect(userData.id).toHaveLength(21);
 
@@ -59,7 +64,13 @@ describe('UsersService', () => {
         email: 'test@example.com',
         password: 'testPassword',
       });
-      expect(loginData.email).toEqual('test@example.com');
+      expect(loginData.user.email).toEqual('test@example.com');
+      expect(authService.readToken(loginData.accessToken).type).toEqual(
+        'access',
+      );
+      expect(authService.readToken(loginData.refreshToken).type).toEqual(
+        'refresh',
+      );
     });
 
     it('should fail on invalid password', async () => {
@@ -68,6 +79,7 @@ describe('UsersService', () => {
         password: 'testPassword',
         firstName: 'Test',
         lastName: 'User',
+        isActive: true,
       });
       expect(userData.id).toHaveLength(21);
 
@@ -82,11 +94,27 @@ describe('UsersService', () => {
       }
       expect(err).toBeInstanceOf(UnauthorizedException);
     });
-  });
 
-  describe('findAll', () => {
-    it('should return an array of users', async () => {
-      expect(await usersService.findAll()).toEqual([]);
+    it('should fail on inactive user', async () => {
+      const userData = await usersService.create({
+        email: 'test@example.com',
+        password: 'testPassword',
+        firstName: 'Test',
+        lastName: 'User',
+        isActive: false,
+      });
+      expect(userData.id).toHaveLength(21);
+
+      let err;
+      try {
+        const loginData = await usersService.login({
+          email: 'test@example.com',
+          password: 'invalidPassword',
+        });
+      } catch (e) {
+        err = e;
+      }
+      expect(err).toBeInstanceOf(UnauthorizedException);
     });
   });
 });

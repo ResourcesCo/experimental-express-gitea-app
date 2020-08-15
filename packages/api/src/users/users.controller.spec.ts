@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
+import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { getDatabaseImportsForEntities } from '../testing';
@@ -13,7 +14,7 @@ describe('UsersController', () => {
     module = await Test.createTestingModule({
       imports: [...getDatabaseImportsForEntities([User])],
       controllers: [UsersController],
-      providers: [UsersService],
+      providers: [AuthService, UsersService],
     }).compile();
 
     usersService = module.get<UsersService>(UsersService);

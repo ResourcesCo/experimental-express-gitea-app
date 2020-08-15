@@ -7,15 +7,20 @@ import {
   HttpStatus,
   Body,
 } from '@nestjs/common';
-import { LoginUserDto } from './dto';
+import { UsersService } from './users.service';
+import { LoginUserDto, LoginResponseDto } from './dto';
 
 @Controller('users')
 export class UsersController {
-  @Post()
-  async login(@Body() dto: LoginUserDto) {}
+  private usersService: UsersService;
 
-  @Get()
-  findAll() {
-    return [];
+  constructor(usersService: UsersService) {
+    this.usersService = usersService;
+  }
+
+  @Post('login')
+  async login(@Body() dto: LoginUserDto): Promise<LoginResponseDto> {
+    const { email, password } = dto;
+    return this.usersService.login({ email, password });
   }
 }
