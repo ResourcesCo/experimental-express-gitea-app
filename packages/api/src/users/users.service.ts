@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
@@ -53,13 +57,25 @@ export class UsersService {
     if (!this.signupOpen && signupCode !== this.signupCode) {
       throw new UnauthorizedException('invalid signup code');
     }
-    const user = await this.create({
-      firstName,
-      lastName,
-      email,
-      password,
-      isActive: true,
-    });
+    try {
+      const user = await this.create({
+        firstName,
+        lastName,
+        email,
+        password,
+        isActive: true,
+      });
+    } catch (err) {
+      if (err.toString().includes('users_email_key')) {
+        throw new UnprocessableEntityException({
+          statusCode: 422,
+          error: 'The email address is already taken',
+          errors: { email: ['already_taken'] },
+        });
+      } else {
+        throw err;
+      }
+    }
     return await this.login({ email, password });
   }
 

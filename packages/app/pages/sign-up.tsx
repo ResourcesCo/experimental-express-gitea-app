@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useRouter } from "next/router";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp({ rememberMe = false }) {
+export default function SignUp() {
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
@@ -40,8 +41,13 @@ export default function SignUp({ rememberMe = false }) {
     password: "",
     signupCode: "",
   });
-  const setField = (name: string, value: any) =>
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+  const setField = (name: string, value: any) => {
     setData({ ...data, [name]: value });
+    const { [name]: remove, ...newErrors } = errors;
+    setErrors(newErrors);
+  };
+  const router = useRouter();
   const classes = useStyles();
 
   const makeSignupRequest = async () => {
@@ -55,6 +61,14 @@ export default function SignUp({ rememberMe = false }) {
         body: JSON.stringify(data),
       }
     );
+    const respBody = await resp.json();
+    if (resp.ok) {
+      router.replace("/");
+    } else {
+      if (respBody.errors) {
+        setErrors(respBody.errors);
+      }
+    }
   };
 
   return (
@@ -109,6 +123,8 @@ export default function SignUp({ rememberMe = false }) {
             autoComplete="email"
             value={data.email}
             onChange={({ target: { value } }) => setField("email", value)}
+            error={"email" in errors}
+            helperText={"email" in errors ? "Email already taken" : undefined}
           />
           <TextField
             variant="outlined"

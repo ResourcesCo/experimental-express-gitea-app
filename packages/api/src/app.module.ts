@@ -8,7 +8,6 @@ import { User } from './users/user.entity';
 import { Token } from './users/tokens/token.entity';
 import { UsersModule } from './users/users.module';
 import { Connection } from 'typeorm';
-import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [
