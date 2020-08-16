@@ -27,16 +27,22 @@ export class Token {
   @Column()
   type: string;
 
-  @Column({ name: 'created_at', default: 'now()' })
+  @Column({ name: 'is_active' })
+  isActive: boolean;
+
+  @Column({ type: 'timestamp', name: 'created_at', default: 'now()' })
   createdAt: Date;
 
-  @Column({ name: 'expires_at' })
+  @Column({ type: 'timestamp', name: 'expires_at' })
   expiresAt: Date;
 
   @BeforeInsert()
   setDefaults() {
     if (!this.id) {
       this.id = nanoid();
+    }
+    if (!this.token) {
+      this.token = nanoid(42);
     }
   }
 }
