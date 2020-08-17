@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Token } from './token.entity';
@@ -38,5 +38,22 @@ export class TokensService {
     return {
       token: token.token,
     };
+  }
+
+  // for mocking
+  private getCurrentDate() {
+    return new Date();
+  }
+
+  async verifyToken({ token }: { token: string }): Promise<{ user: User }> {
+    const tokenRecord = await this.tokensRepository.findOne(
+      { token },
+      { relations: ['user'] },
+    );
+    if (this.getCurrentDate() < tokenRecord.expiresAt) {
+      return { user: tokenRecord.user };
+    } else {
+      throw new UnauthorizedException('Token has expired');
+    }
   }
 }
