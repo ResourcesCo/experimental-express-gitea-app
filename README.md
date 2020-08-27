@@ -1,4 +1,4 @@
-# app.resources.co
+# app
 
 ## Development
 

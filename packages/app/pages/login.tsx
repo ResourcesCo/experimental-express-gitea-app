@@ -1,12 +1,6 @@
-import { useState, useCallback } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -25,29 +19,18 @@ const useStyles = makeStyles((theme) => ({
   },
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(4),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(0.5, 0, 2),
   },
 }));
 
-export default function SignIn({ rememberMe = false }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function SignIn() {
   const classes = useStyles();
 
-  const handleSubmit = async () => {
-    const resp = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      }
-    );
+  const redirectToSignIn = (provider: string) => {
+    window.location.href = `${process.env.NEXT_CONFIG_API_BASE}/auth/${provider}`;
   };
 
   return (
@@ -60,55 +43,25 @@ export default function SignIn({ rememberMe = false }) {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={({ target: { value } }) => setEmail(value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={({ target: { value } }) => setPassword(value)}
-          />
-          {rememberMe && (
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-          )}
+        <form className={classes.form} noValidate>
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={() => redirectToSignIn("github")}
           >
-            Sign In
+            Sign In with GitHub
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-          </Grid>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={() => redirectToSignIn("gitlab")}
+          >
+            Sign In with GitLab
+          </Button>
         </form>
       </div>
     </Container>

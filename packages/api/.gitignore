@@ -1,0 +1,5 @@
+/env.json
+/env.*.json
+!/*.example.json
+/config/jwk/*.json
+!/config/jwk/*.example.json

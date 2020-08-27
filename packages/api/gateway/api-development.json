@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "extra_config": {},
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "port": 3001,
+  "name": "resources-co-api",
+  "endpoints": [
+    {
+      "endpoint": "/login",
+      "method": "POST",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/signer": {
+          "alg": "RS256",
+          "jwk-url": "http://localhost:3299/jwk/jwk-private.json",
+          "kid": "devel",
+          "keys-to-sign": ["accessToken", "refreshToken"],
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/login",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "extra_config": {},
+          "host": ["127.0.0.1:3002"],
+          "disable_host_sanitize": false
+        }
+      ]
+    }
+  ]
+}
