@@ -8,7 +8,7 @@ the following command:
 go get -tags 'postgres' -u github.com/golang-migrate/migrate/cmd/migrate
 ```
 
-To simply run the migrations, use `npm run migrate`.
+To simply run the migrations, use `yarn migrate`.
 
 To run the migrate commands, first set `GO_DATABASE_URL`:
 
