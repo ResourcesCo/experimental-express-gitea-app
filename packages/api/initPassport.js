@@ -5,7 +5,7 @@ const GitLabStrategy = require("passport-gitlab2");
 const auth = require("./auth");
 const users = require("./users");
 
-const failureRedirect = loginUrl;
+const failureRedirect = `${process.env.APP_BASE}/login`;
 
 const strategies = {
   github: GitHubStrategy,

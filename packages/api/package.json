@@ -7,10 +7,11 @@
     "start": "PORT=3002 node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "gateway": "krakend run --config gateway/api.json",
-    "jwk-dev": "http-server -p 3299 -a 127.0.0.1"
+    "jwk-server": "http-server -p 3299 -a 127.0.0.1 jwk/",
+    "migrate": "migrate -database $(cat env.json | gojq -r '.GO_DATABASE_URL') -path ./migrations up"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",

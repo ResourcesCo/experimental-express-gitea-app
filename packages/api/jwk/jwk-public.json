@@ -1,0 +1,11 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "e": "AQAB",
+      "use": "sig",
+      "kid": "workspace.local",
+      "n": "gs1LujmZeWAFdQVlhjnOxjLrNuRQ3bDB5LOuRijKUlQXbpGfsJV11ZXSDsGGOPEXX2i5aiNSaM8RmEe0xspzERNCuub1jfuHVnrrkAvvvkqqkBph5DIMS_82ceZsI5-Jj97eTaJy9z2T6WPWAY1oVL-IgAZaEUwvyygm32bPYzAh7ghthz2rinMmDPPGlDHyDHk3-kkA-QoWNTWxtuCaWbH9SE7g_E2F2rTSrQcVgOrypJlxdWjlhY5sZpb7Om_GzBS7tgF0gfa8gcojeCyRsHUbHuvH7IOzq5FVz7rzoXm3LnAFafiFwMeoZv82cNbwLMkBvL0EIyUd_T70HXvk2w"
+    }
+  ]
+}
