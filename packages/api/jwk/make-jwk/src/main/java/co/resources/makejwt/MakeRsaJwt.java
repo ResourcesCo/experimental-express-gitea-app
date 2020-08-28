@@ -11,7 +11,7 @@ public class MakeRsaJwt {
         // Generate 2048-bit RSA key pair in JWK format, attach some metadata
         RSAKey jwk = new RSAKeyGenerator(2048)
             .keyUse(KeyUse.SIGNATURE) // indicate the intended use of the key
-            .keyID("workspace.local") // give the key a unique ID
+            .keyID("devel") // give the key a unique ID
             .generate();
 
         // Output the private and public RSA JWK parameters

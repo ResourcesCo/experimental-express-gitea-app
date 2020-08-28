@@ -7,7 +7,7 @@
     "start": "PORT=3002 node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "gateway": "krakend run --config gateway/api.json",
-    "jwk-server": "http-server -p 3299 -a 127.0.0.1 jwk/",
+    "jwk-server": "caddy file-server --listen 127.0.0.1:3099 jwk/",
     "migrate": "migrate -database $(cat env.json | gojq -r '.GO_DATABASE_URL') -path ./migrations up"
   },
   "author": "",
