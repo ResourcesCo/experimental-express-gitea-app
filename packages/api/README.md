@@ -1,12 +1,14 @@
+## Go tools
+
+This is a hybrid Node/Go project that depends on the following go tools:
+
+- [krakend](https://www.krakend.io/)
+- [caddy](https://caddyserver.com/)
+- [reflex](https://github.com/cespare/reflex)
+- [migrate](https://github.com/golang-migrate/migrate)
+- [gojq](https://github.com/itchyny/gojq)
+
 ## Running the migrations
-
-The migrations are based on [migrate](https://github.com/golang-migrate/migrate).
-[Download a release](https://github.com/golang-migrate/migrate) or install with
-the following command:
-
-```bash
-go get -tags 'postgres' -u github.com/golang-migrate/migrate/cmd/migrate
-```
 
 To simply run the migrations, use `yarn migrate`.
 

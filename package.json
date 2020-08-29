@@ -4,5 +4,10 @@
   "devDependencies": {
     "lerna": "^3.22.1"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "scripts": {
+    "test": "yarn api:test && yarn app:test",
+    "api:test": "cd packages/api && yarn test",
+    "app:test": "cd packages/app && yarn test"
+  }
 }

@@ -5,7 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "PORT=3002 node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "yarn run test:migrate:drop && yarn test:migrate && yarn test:run",
+    "test:migrate:drop": "migrate -database $(cat env.test.json | gojq -r '.GO_DATABASE_URL') -path ./migrations drop -f",
+    "test:migrate": "migrate -database $(cat env.test.json | gojq -r '.GO_DATABASE_URL') -path ./migrations up",
+    "test:run": "mocha --require test/hooks.js 'test/**/test*'",
+    "test:watch": "reflex -g 'test/**/test*' mocha --require test/hooks.js {}",
     "gateway": "krakend run --config gateway/api.json",
     "jwk-server": "caddy file-server --listen 127.0.0.1:3099 jwk/",
     "migrate": "migrate -database $(cat env.json | gojq -r '.GO_DATABASE_URL') -path ./migrations up"
@@ -22,5 +26,9 @@
     "passport-gitlab2": "^5.0.0",
     "pg": "^8.3.2",
     "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "ava": "^3.12.1",
+    "xo": "^0.33.0"
   }
 }
