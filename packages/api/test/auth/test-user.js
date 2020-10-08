@@ -2,7 +2,7 @@ const test = require('ava');
 const {before, after} = test;
 const env = require('../../env.test.json');
 const {Pool} = require('pg');
-const users = require('../../users');
+const users = require('../../auth/models/users');
 
 let db;
 

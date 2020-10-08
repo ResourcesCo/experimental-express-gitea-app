@@ -8,7 +8,7 @@
     "test": "yarn run test:migrate:drop && yarn test:migrate && yarn test:run",
     "test:migrate:drop": "migrate -database $(cat env.test.json | gojq -r '.GO_DATABASE_URL') -path ./migrations drop -f",
     "test:migrate": "migrate -database $(cat env.test.json | gojq -r '.GO_DATABASE_URL') -path ./migrations up",
-    "test:run": "mocha --require test/hooks.js 'test/**/test*'",
+    "test:run": "ava --require test/hooks.js 'test/**/test*'",
     "test:watch": "reflex -g 'test/**/test*' mocha --require test/hooks.js {}",
     "gateway": "krakend run --config gateway/api.json",
     "jwk-server": "caddy file-server --listen 127.0.0.1:3099 jwk/",

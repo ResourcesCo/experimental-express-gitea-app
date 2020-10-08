@@ -3,7 +3,7 @@ const GitHubStrategy = require('passport-github');
 const GiteaStrategy = require('passport-gitea');
 const GitLabStrategy = require('passport-gitlab2');
 const auth = require('./auth');
-const users = require('./users');
+const users = require('./auth/models/users');
 
 const failureRedirect = `${process.env.APP_BASE}/login`;
 
