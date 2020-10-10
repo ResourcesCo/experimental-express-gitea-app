@@ -6,6 +6,14 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 
+function randomChars(length) {
+  const chars = "0123456789abcdefghijklmnopqrstuvwxyz" + 
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const arr = new Uint8Array(length);
+  window.crypto.getRandomValues(arr);
+  return Array.from(arr).map(n => chars[n % chars.length]).join('');
+}
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -30,7 +38,10 @@ export default function SignIn() {
   const classes = useStyles();
 
   const redirectToSignIn = (provider: string) => {
-    window.location.href = `${process.env.NEXT_CONFIG_API_BASE}/auth/${provider}`;
+    const authStates = JSON.parse(window.localStorage.getItem('authStates') || '[]');
+    const state = randomChars(32);
+    window.localStorage.setItem(`/auth/${provider}/state`, JSON.stringify([...authStates, state]));
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/${provider}?state=${state}`;
   };
 
   return (

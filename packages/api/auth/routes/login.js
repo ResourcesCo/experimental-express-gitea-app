@@ -1,4 +1,4 @@
-export default function getLoginHandler({users, tokens}) {
+module.exports = function getLoginHandler({users, tokens}) {
     return (request, response) => {
         let userId;
         users

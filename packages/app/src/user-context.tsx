@@ -11,6 +11,7 @@ export class Client {
     url: string,
     { method, body, authenticated = true }: ClientFetchInfo
   ) {
+    const token = ''; // TODO: get token
     const resp = await fetch(url, {
       method: method || (body ? "POST" : "GET"),
       headers: {
@@ -26,6 +27,7 @@ export class Client {
       body: respBody,
     };
   }
+  // TODO: verify state before logging in
   async login({ token }: { token: string }) {
     const resp = await this.fetch("/login", {
       authenticated: false,

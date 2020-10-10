@@ -23,7 +23,7 @@ export default function MyApp(props: AppProps) {
   return (
     <React.Fragment>
       <Head>
-        <title>{process.env.NEXT_CONFIG_TITLE}</title>
+        <title>Resources.co</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"

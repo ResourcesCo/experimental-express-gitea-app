@@ -4,6 +4,7 @@ const GiteaStrategy = require('passport-gitea');
 const GitLabStrategy = require('passport-gitlab2');
 const auth = require('./auth');
 const users = require('./auth/models/users');
+const { authenticate } = require('passport');
 
 const failureRedirect = `${process.env.APP_BASE}/login`;
 
@@ -25,7 +26,7 @@ function addProvider(
 			{
 				clientID: process.env[`${name.toUpperCase()}_CLIENT_ID`],
 				clientSecret: process.env[`${name.toUpperCase()}_CLIENT_SECRET`],
-				callbackURL: `${process.env.API_BASE}/auth/${name}/callback`,
+				callbackURL: `${process.env.API_OAUTH_BASE}/auth/${name}/callback`,
 				...(strategyName === 'gitea' ?
 					{name, authorizationUrl, tokenUrl, userProfileUrl} :
 					{})
@@ -38,12 +39,20 @@ function addProvider(
 }
 
 function addRoutes(app, db, {name}) {
-	app.get(`/auth/${name}`, passport.authenticate(name, {session: false}));
+	console.log('creating route /auth/', name);
+	app.get(`/auth/${name}`, (req, res, next) => {
+		console.log('state is', req.query.state);
+		const authenticator = passport.authenticate(name, {
+			session: false,
+			state: req.query.state
+		});
+		return authenticator(req, res, next);
+	});
 	app.get(
 		`/auth/${name}/callback`,
 		passport.authenticate(name, {failureRedirect, session: false}),
-		(request, response, next) => {
-			const {accessToken, refreshToken, profile} = request.user;
+		({user, query: {state}}, res, next) => {
+			const {accessToken, refreshToken, profile} = user;
 			const email = profile.emails[0].value;
 			users
 				.findOrCreateUser(db, {
@@ -57,8 +66,8 @@ function addRoutes(app, db, {name}) {
 					return users.createLoginToken(db, {userId: user.id});
 				})
 				.then(token => {
-					response.redirect(
-						`${process.env.APP_BASE}/login?token=${token.token}`
+					res.redirect(
+						`${process.env.APP_BASE}/login?token=${token.token}&state=${state}`
 					);
 				})
 				.catch(error => {
