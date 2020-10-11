@@ -1,4 +1,4 @@
-const env = require('./env.json');
+const env = require('./config/env.json');
 
 module.exports = () => {
 	for (const key of Object.keys(env)) {

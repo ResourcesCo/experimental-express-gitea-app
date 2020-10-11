@@ -20,7 +20,7 @@ public class MakeRsaJwt {
         
         // Output the private and public RSA JWK parameters
         try {
-            File privateKeyFile = new File("../PrivateKeySet.json");
+            File privateKeyFile = new File("PrivateKeySet.json");
             FileWriter privateKeyFileWriter = new FileWriter(privateKeyFile);
             JSONArray privateKeyArray = new JSONArray();
             privateKeyArray.add(jwk.toJSONObject());
@@ -35,7 +35,7 @@ public class MakeRsaJwt {
 
         // Output the public RSA JWK parameters only
         try {
-            File publicKeyFile = new File("../PublicKeySet.json");
+            File publicKeyFile = new File("PublicKeySet.json");
             FileWriter publicKeyFileWriter = new FileWriter(publicKeyFile);
             JSONArray publicKeyArray = new JSONArray();
             publicKeyArray.add(jwk.toPublicJWK().toJSONObject());
