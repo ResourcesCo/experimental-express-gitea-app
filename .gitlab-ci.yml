@@ -1,9 +1,24 @@
-e2e:
+api:
   image: mcr.microsoft.com/playwright:bionic
+  services:
+    - postgres
   script:
-    - apt-key adv --keyserver keyserver.ubuntu.com --recv 5DE6FD698AD6FDD2
-    - echo "deb http://repo.krakend.io/apt stable main" | tee /etc/apt/sources.list.d/krakend.list
-    - apt-get update
-    - apt-get install -y krakend
+    - packages/api/scripts/install-go-binaries-linux-amd64.sh
+    - export PATH=$(pwd)/packages/api/bin:$PATH
+    - createuser resourcesco-app
+    - createdb --owner resourcesco-app resourcesco-app-test
     - yarn install
-    - yarn test
+    - yarn api:test
+
+app-e2e:
+  image: mcr.microsoft.com/playwright:bionic
+  services:
+    - postgres
+  script:
+    - packages/api/scripts/install-go-binaries-linux-amd64.sh
+    - export PATH=$(pwd)/packages/api/bin:$PATH
+    - createuser resourcesco-app
+    - createdb --owner resourcesco-app resourcesco-app-test
+    - pushd packages/api && yarn migrate && popd
+    - yarn install
+    - yarn app:test
