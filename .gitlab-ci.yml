@@ -1,13 +1,9 @@
-stages:
-  - e2e
-
 e2e:
   image: mcr.microsoft.com/playwright:bionic
-  before_script:
+  script:
     - apt-key adv --keyserver keyserver.ubuntu.com --recv 5DE6FD698AD6FDD2
     - echo "deb http://repo.krakend.io/apt stable main" | tee /etc/apt/sources.list.d/krakend.list
     - apt-get update
     - apt-get install -y krakend
-  script:
     - yarn install
     - yarn test
