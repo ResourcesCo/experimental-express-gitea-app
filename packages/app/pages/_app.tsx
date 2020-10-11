@@ -4,12 +4,12 @@ import { AppProps } from "next/app";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
-import UserContext, { Client, userReducer } from "../src/user-context";
+import UserContext, { Client, userReducer, initialState } from "../src/user-context";
 
 export default function MyApp(props: AppProps) {
   const { Component, pageProps } = props;
 
-  const [state, dispatch] = useReducer();
+  const [state, dispatch] = useReducer(userReducer, initialState);
   const client = new Client();
 
   React.useEffect(() => {
@@ -29,7 +29,7 @@ export default function MyApp(props: AppProps) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <UserContext.Provider value={{ state, dispatch }}>
+      <UserContext.Provider value={{ client, state, dispatch }}>
         <ThemeProvider theme={theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />

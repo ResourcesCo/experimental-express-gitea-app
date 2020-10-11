@@ -1,12 +1,38 @@
-## Go tools
+# Resources.co API
 
-This is a hybrid Node/Go project that depends on the following go tools:
+## Tools
+
+The following tools are needed to build and run the API. For an example of how to
+install them, see `.gitlab-ci` in the root of the repo.
+
+This API is a hybrid Golang/Node project. The following go tools are used
+in development and/or production. They can be installed by grabbing a binary
+or using `go`.
 
 - [krakend](https://www.krakend.io/)
 - [caddy](https://caddyserver.com/)
 - [reflex](https://github.com/cespare/reflex)
 - [migrate](https://github.com/golang-migrate/migrate)
 - [gojq](https://github.com/itchyny/gojq)
+
+Maven is also used to run Java to generate the JSON Web Keys for Krakend,
+so it can sign and verify JWTs:
+
+- [Apache Maven](https://maven.apache.org/)
+
+## Configuration
+
+The configuration is stored in `env.json` and accessed by the using `gojq`
+
+## Generating JSON Web Keys
+
+To generate the JSON web keys, run these commands:
+
+- `cd jwk/make-jwk`
+- `mvn install`
+- `mvn compile exec:java -Dexec.mainClass=co.resources.makejwt.MakeRsaJwt`
+
+The key sets will be placed in `jwt` and served in the API
 
 ## Running the migrations
 

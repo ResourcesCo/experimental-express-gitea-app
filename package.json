@@ -6,8 +6,11 @@
   },
   "dependencies": {},
   "scripts": {
+    "postinstall": "yarn api:install && yarn app:install",
     "test": "yarn api:test && yarn app:test",
     "api:test": "cd packages/api && yarn test",
-    "app:test": "cd packages/app && yarn test"
+    "api:install": "cd packages/api && yarn install",
+    "app:test": "cd packages/app && yarn test",
+    "app:install": "cd packages/app && yarn install"
   }
 }

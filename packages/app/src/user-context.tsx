@@ -33,6 +33,7 @@ export class Client {
       authenticated: false,
       body: { token },
     });
+    return resp;
   }
 }
 
@@ -45,6 +46,8 @@ interface PlainUserAction {
 }
 
 type UserAction = PlainUserAction;
+
+export const initialState = { loggedIn: false };
 
 export function userReducer(state: UserState, action: UserAction): UserState {
   switch (action.type) {

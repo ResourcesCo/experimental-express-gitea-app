@@ -22,9 +22,20 @@ app.use(bodyParser.json());
 
 initPassport(app, db);
 
-app.get('/', (request, response) => {
-	response.send('Hello World!');
+app.get('/', (req, res) => {
+	res.send('Hello World!');
 });
+
+app.get('/jwk/PrivateKeySet.json', (req, res) => {
+	// TODO: validate username/password w/ basic auth and send keys
+	res.send({});
+});
+
+app.get('/jwk/PublicKeySet.json', (req, res) => {
+	// TODO: validate username/password w/ basic auth and send keys
+	res.send({});
+});
+
 
 app.post('/login', login({users, tokens}));
 

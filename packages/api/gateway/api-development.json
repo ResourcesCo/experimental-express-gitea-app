@@ -14,7 +14,7 @@
       "extra_config": {
         "github.com/devopsfaith/krakend-jose/signer": {
           "alg": "RS256",
-          "jwk-url": "http://localhost:3099/jwk-private.json",
+          "jwk-url": "http://JWK_USERNAME:JWK_PASSWORD@localhost:3000/jwk/PrivateKeySet.json",
           "kid": "devel",
           "keys-to-sign": ["accessToken", "refreshToken"],
           "disable_jwk_security": true

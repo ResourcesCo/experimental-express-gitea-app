@@ -1,5 +1,6 @@
-/env.json
-/env.*.json
-!/*.example.json
-/config/jwk/*.json
-!/config/jwk/*.example.json
+/config/env.json
+/config/env.*.json
+!/config/*.example.json
+/jwk/PrivateKeySet.json
+/jwk/PublicKeySet.json
+/gateway/settings/jwk.json
