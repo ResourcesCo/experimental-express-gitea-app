@@ -1,6 +1,5 @@
 const test = require('ava');
 const {before, after} = test;
-const env = require('../../env.test.json');
 const {Pool} = require('pg');
 const users = require('../../auth/models/users');
 
@@ -8,7 +7,7 @@ let db;
 
 before(() => {
 	db = new Pool({
-		connectionString: env.NODE_DATABASE_URL
+		connectionString: process.env.NODE_TEST_DATABASE_URL
 	});
 });
 

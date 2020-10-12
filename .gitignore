@@ -108,4 +108,6 @@ dist
 
 # .env
 .env.local
+.env
+.env.json
 /.vscode

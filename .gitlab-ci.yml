@@ -1,24 +1,38 @@
 api:
   image: mcr.microsoft.com/playwright:bionic
-  services:
-    - postgres
+  services: postgres
+  variables:
+    POSTGRES_DB: resourcesco-app-test
+    POSTGRES_USER: resourcesco-app
+    POSTGRES_PASSWORD: ramen32
+    POSTGRES_HOST_AUTH_METHOD: trust
+    NODE_TEST_DATABASE_URL: postgres://resourcesco-app:ramen32@postgres/resourcesco-app-test
+    GO_TEST_DATABASE_URL: postgres://resourcesco-app:ramen32@postgres/resourcesco-app-test?sslmode=disable
   script:
+    - sudo apt-get install -y postgresql-client libpq-dev
     - packages/api/scripts/install-go-binaries-linux-amd64.sh
     - export PATH=$(pwd)/packages/api/bin:$PATH
-    - createuser resourcesco-app
-    - createdb --owner resourcesco-app resourcesco-app-test
     - yarn install
     - yarn api:test
 
 app-e2e:
   image: mcr.microsoft.com/playwright:bionic
-  services:
-    - postgres
+  services: postgres
+  variables:
+    POSTGRES_DB: resourcesco-app
+    POSTGRES_USER: resourcesco-app
+    POSTGRES_PASSWORD: ramen32
+    POSTGRES_HOST_AUTH_METHOD: trust
+    NODE_ENV: development
+    APP_BASE: http://localhost:3000
+    API_OAUTH_BASE: http://localhost:3002
+    API_GATEWAY_BASE: http://localhost:5200
+    NODE_TEST_DATABASE_URL: postgres://resourcesco-app:ramen32@postgres/resourcesco-app
+    GO_TEST_DATABASE_URL: postgres://resourcesco-app:ramen32@postgres/resourcesco-app?sslmode=disable
   script:
+    - apt install -y postgresql-client libpq-dev
     - packages/api/scripts/install-go-binaries-linux-amd64.sh
     - export PATH=$(pwd)/packages/api/bin:$PATH
-    - createuser resourcesco-app
-    - createdb --owner resourcesco-app resourcesco-app-test
-    - pushd packages/api && yarn migrate && popd
     - yarn install
-    - yarn app:test
+    - yarn api:migrate
+    - yarn test:integration
