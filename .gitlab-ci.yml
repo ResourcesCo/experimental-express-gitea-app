@@ -1,6 +1,7 @@
 api:
   image: mcr.microsoft.com/playwright:bionic
-  services: postgres
+  services:
+    - postgres
   variables:
     POSTGRES_DB: resourcesco-app-test
     POSTGRES_USER: resourcesco-app
@@ -17,7 +18,8 @@ api:
 
 app-e2e:
   image: mcr.microsoft.com/playwright:bionic
-  services: postgres
+  services:
+    - postgres
   variables:
     POSTGRES_DB: resourcesco-app
     POSTGRES_USER: resourcesco-app
