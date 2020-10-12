@@ -1,5 +1,7 @@
 # app
 
+[![pipeline status](https://gitlab.com/ResourcesCo/app/badges/develop/pipeline.svg)](https://gitlab.com/ResourcesCo/app/-/pipelines)
+
 ## Development
 
 ### Installation
