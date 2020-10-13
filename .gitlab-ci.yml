@@ -36,7 +36,7 @@ app-e2e:
     - packages/api/scripts/install-go-binaries-linux-amd64.sh
     - export PATH=$(pwd)/packages/api/bin:$PATH
     - yarn install
-    - cd packages/app && yarn install playwright && cd ../..
+    - cd packages/app && npm install playwright && cd ../..
     - yarn api:migrate
     - mv $PRIVATE_JWK_KEY_FILE packages/api/config/jwk/PrivateKeySet.json
     - mv $PUBLIC_JWK_KEY_FILE packages/api/config/jwk/PublicKeySet.json
