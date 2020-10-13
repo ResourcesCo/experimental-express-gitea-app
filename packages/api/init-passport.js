@@ -26,7 +26,7 @@ function addProvider(
 			{
 				clientID: process.env[`${name.toUpperCase()}_CLIENT_ID`],
 				clientSecret: process.env[`${name.toUpperCase()}_CLIENT_SECRET`],
-				callbackURL: `${process.env.API_OAUTH_BASE}/auth/${name}/callback`,
+				callbackURL: `${process.env.API_BASE_OAUTH || process.env.API_BASE}/auth/${name}/callback`,
 				...(strategyName === 'gitea' ?
 					{name, authorizationUrl, tokenUrl, userProfileUrl} :
 					{})
@@ -41,7 +41,6 @@ function addProvider(
 function addRoutes(app, db, {name}) {
 	console.log('creating route /auth/', name);
 	app.get(`/auth/${name}`, (req, res, next) => {
-		console.log('state is', req.query.state);
 		const authenticator = passport.authenticate(name, {
 			session: false,
 			state: req.query.state

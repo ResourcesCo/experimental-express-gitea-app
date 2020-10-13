@@ -1,3 +1,5 @@
+import { useEffect, useContext } from 'react';
+import { useRouter } from 'next/router';
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -5,6 +7,10 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import UserContext from '../src/user-context';
+
+const authStatesKey = 'rco-app-authStates';
+const oauthBaseUrl = process.env.NEXT_PUBLIC_API_BASE_OAUTH || process.env.NEXT_PUBLIC_API_BASE;
 
 function randomChars(length: number) {
   const chars = "0123456789abcdefghijklmnopqrstuvwxyz" + 
@@ -36,13 +42,42 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
+  const router = useRouter();
+
+  const { client } = useContext(UserContext)!;
 
   const redirectToSignIn = (provider: string) => {
-    const authStates = JSON.parse(window.localStorage.getItem('authStates') || '[]');
+    const authStates = JSON.parse(window.localStorage.getItem(authStatesKey) || '[]');
     const state = randomChars(32);
-    window.localStorage.setItem(`/auth/${provider}/state`, JSON.stringify([...authStates, state]));
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/${provider}?state=${state}`;
+    window.localStorage.setItem(authStatesKey, JSON.stringify([...authStates, state]));
+    window.location.href = `${oauthBaseUrl}/auth/${provider}?state=${state}`;
   };
+
+  useEffect(() => {
+    (async () => {
+      const { token, state } = router.query;
+      console.log({token, state});
+      if (typeof token === 'string') {
+        const authStates: string[] = JSON.parse(window.localStorage.getItem(authStatesKey) || '[]');
+        if (typeof state === 'string') {
+          if (authStates.includes(state)) {
+            const newAuthStates = authStates.filter(st => st !== state);
+            if (newAuthStates.length > 0) {
+              window.localStorage.setItem(authStatesKey, JSON.stringify(newAuthStates));
+            } else {
+              window.localStorage.removeItem(authStatesKey);
+            }
+            const resp = await client.login({ token });
+            console.log('logged in');
+            router.replace('/');
+          } else {
+            console.warn('Invalid auth state', state);
+            router.replace('/login');
+          }
+        }
+      }
+    })();
+  }, [router.query]);
 
   return (
     <Container component="main" maxWidth="xs">

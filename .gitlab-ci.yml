@@ -27,10 +27,13 @@ app-e2e:
     POSTGRES_HOST_AUTH_METHOD: trust
     NODE_ENV: development
     APP_BASE: http://localhost:3000
-    API_OAUTH_BASE: http://localhost:3002
-    API_GATEWAY_BASE: http://localhost:5200
+    API_BASE: http://localhost:3001
+    API_BASE_OAUTH: http://localhost:3002
     NODE_DATABASE_URL: postgres://resourcesco-app:ramen32@postgres/resourcesco-app
     GO_DATABASE_URL: postgres://resourcesco-app:ramen32@postgres/resourcesco-app?sslmode=disable
+    NEXT_PUBLIC_APP_BASE: http://localhost:3000
+    NEXT_PUBLIC_API_BASE: http://localhost:3001
+    NEXT_PUBLIC_API_BASE_OAUTH: http://localhost:3002
   script:
     - apt-get install -y postgresql-client libpq-dev
     - packages/api/scripts/install-go-binaries-linux-amd64.sh

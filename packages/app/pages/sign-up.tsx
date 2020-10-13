@@ -50,7 +50,7 @@ export default function SignUp() {
 
   const makeSignupRequest = async () => {
     const resp = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/sign-up`,
+      `${process.env.NEXT_PUBLIC_API_BASE}/users/sign-up`,
       {
         method: "POST",
         headers: {

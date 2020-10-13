@@ -1,4 +1,4 @@
-module.exports = function getLoginHandler({users, tokens}) {
+module.exports = function getLoginHandler({db, users, tokens}) {
     return (request, response) => {
         let userId;
         users

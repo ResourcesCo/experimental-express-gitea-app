@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch } from "react";
 
 interface ClientFetchInfo {
   method?: string;
@@ -7,6 +7,10 @@ interface ClientFetchInfo {
 }
 
 export class Client {
+  constructor() {
+    
+  }
+
   async fetch(
     url: string,
     { method, body, authenticated = true }: ClientFetchInfo
@@ -29,7 +33,7 @@ export class Client {
   }
   // TODO: verify state before logging in
   async login({ token }: { token: string }) {
-    const resp = await this.fetch("/login", {
+    const resp = await this.fetch(`${process.env.NEXT_PUBLIC_API_BASE}/login`, {
       authenticated: false,
       body: { token },
     });
@@ -58,6 +62,12 @@ export function userReducer(state: UserState, action: UserAction): UserState {
   }
 }
 
-const UserContext = React.createContext({});
+interface UserContextType {
+  client: Client,
+  state: UserState,
+  dispatch: Dispatch<UserAction>
+}
+
+const UserContext = React.createContext<UserContextType | undefined>(undefined);
 
 export default UserContext;

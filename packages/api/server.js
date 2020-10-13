@@ -34,7 +34,7 @@ app.get('/jwk/PublicKeySet.json', (req, res) => {
 });
 
 
-app.post('/login', login({users, tokens}));
+app.post('/login', login({db, users, tokens}));
 
 app.listen(process.env.PORT, () => {
 	console.log(`Example app listening at http://localhost:${process.env.PORT}`);
