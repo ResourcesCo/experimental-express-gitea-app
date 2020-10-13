@@ -56,7 +56,6 @@ export default function SignIn() {
   useEffect(() => {
     (async () => {
       const { token, state } = router.query;
-      console.log({token, state});
       if (typeof token === 'string') {
         const authStates: string[] = JSON.parse(window.localStorage.getItem(authStatesKey) || '[]');
         if (typeof state === 'string') {
@@ -68,7 +67,6 @@ export default function SignIn() {
               window.localStorage.removeItem(authStatesKey);
             }
             const resp = await client.login({ token });
-            console.log('logged in');
             router.replace('/');
           } else {
             console.warn('Invalid auth state', state);

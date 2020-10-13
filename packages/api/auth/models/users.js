@@ -45,7 +45,6 @@ exports.createLoginToken = async (db, {userId}) => {
 exports.getLoginToken = async (db, {token}) => {
 	const result = await db.query('select * from login_tokens where token = $1', [token]);
 	const returnValue = (result && result.rows && result.rows.length === 1) ? result.rows[0] : undefined;
-	console.log('returning', returnValue);
 	return returnValue;
 };
 

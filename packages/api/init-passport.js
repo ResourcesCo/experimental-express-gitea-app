@@ -39,7 +39,6 @@ function addProvider(
 }
 
 function addRoutes(app, db, {name}) {
-	console.log('creating route /auth/', name);
 	app.get(`/auth/${name}`, (req, res, next) => {
 		const authenticator = passport.authenticate(name, {
 			session: false,
