@@ -9,8 +9,17 @@ import UserContext, { Client, userReducer, initialState } from "../src/user-cont
 export default function MyApp(props: AppProps) {
   const { Component, pageProps } = props;
 
-  const [state, dispatch] = useReducer(userReducer, initialState);
   const client = new Client();
+  client.loadTokens();
+  const [state, dispatch] = useReducer(userReducer, {...initialState, loggedIn: client.loggedIn});
+
+  client.onLoggedInStatusChanged = ({loggedIn}) => {
+    if (loggedIn) {
+      dispatch({type: 'loggedIn'});
+    } else {
+      dispatch({type: 'loggedOut'});
+    }
+  }
 
   React.useEffect(() => {
     // Remove the server-side injected CSS.

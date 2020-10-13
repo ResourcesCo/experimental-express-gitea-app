@@ -8,8 +8,8 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import UserContext from '../src/user-context';
+import { AUTH_STATES_STORAGE_KEY } from '../src/constants';
 
-const authStatesKey = 'rco-app-authStates';
 const oauthBaseUrl = process.env.NEXT_PUBLIC_API_BASE_OAUTH || process.env.NEXT_PUBLIC_API_BASE;
 
 function randomChars(length: number) {
@@ -47,9 +47,9 @@ export default function SignIn() {
   const { client } = useContext(UserContext)!;
 
   const redirectToSignIn = (provider: string) => {
-    const authStates = JSON.parse(window.localStorage.getItem(authStatesKey) || '[]');
+    const authStates = JSON.parse(window.localStorage.getItem(AUTH_STATES_STORAGE_KEY) || '[]');
     const state = randomChars(32);
-    window.localStorage.setItem(authStatesKey, JSON.stringify([...authStates, state]));
+    window.localStorage.setItem(AUTH_STATES_STORAGE_KEY, JSON.stringify([...authStates, state]));
     window.location.href = `${oauthBaseUrl}/auth/${provider}?state=${state}`;
   };
 
@@ -57,14 +57,14 @@ export default function SignIn() {
     (async () => {
       const { token, state } = router.query;
       if (typeof token === 'string') {
-        const authStates: string[] = JSON.parse(window.localStorage.getItem(authStatesKey) || '[]');
+        const authStates: string[] = JSON.parse(window.localStorage.getItem(AUTH_STATES_STORAGE_KEY) || '[]');
         if (typeof state === 'string') {
           if (authStates.includes(state)) {
             const newAuthStates = authStates.filter(st => st !== state);
             if (newAuthStates.length > 0) {
-              window.localStorage.setItem(authStatesKey, JSON.stringify(newAuthStates));
+              window.localStorage.setItem(AUTH_STATES_STORAGE_KEY, JSON.stringify(newAuthStates));
             } else {
-              window.localStorage.removeItem(authStatesKey);
+              window.localStorage.removeItem(AUTH_STATES_STORAGE_KEY);
             }
             const resp = await client.login({ token });
             router.replace('/');

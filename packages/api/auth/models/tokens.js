@@ -9,8 +9,10 @@ function makeToken({userId, sessionId, tokenType, expiresAfter}) {
 }
 
 function makeTokens({userId, sessionId}) {
+	const accessExpiresIn = 30 * 60;
 	return {
-		accessToken: makeToken({userId, sessionId, tokenType: 'access', expiresAfter: 30 * 60}),
+		accessToken: makeToken({userId, sessionId, tokenType: 'access', expiresAfter: accessExpiresIn}),
+		accessTokenExpiresAt: (new Date()).valueOf() + (accessExpiresIn * 1000),
 		refreshToken: makeToken({userId, sessionId, tokenType: 'refresh', expiresAfter: 14 * 24 * 60 * 60})
 	};
 }
