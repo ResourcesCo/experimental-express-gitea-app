@@ -2,7 +2,9 @@
   "version": 2,
   "extra_config": {
     "github_com/devopsfaith/krakend-cors": {
-      "allow_origins": []
+      "allow_origins": [],
+      "allow_methods": ["GET", "POST", "PATCH", "DELETE"],
+      "allow_headers": ["Authorization"]
     }
   },
   "timeout": "3000ms",
@@ -30,6 +32,34 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
+          "extra_config": {},
+          "host": ["127.0.0.1:3002"],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/sessions/current",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "RS256",
+          "jwk-url": "http://127.0.0.1:3099/PublicKeySet.json",
+          "kid": "devel",
+          "roles": ["user"],
+          "disable_jwk_security": true
+        }
+      },
+      "headers_to_pass": [
+        "Authorization"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/sessions/current",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
           "extra_config": {},
           "host": ["127.0.0.1:3002"],
           "disable_host_sanitize": false

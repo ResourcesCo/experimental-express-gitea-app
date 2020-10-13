@@ -12,6 +12,7 @@
     "test:run": "ava --require test/hooks.js 'test/**/test*'",
     "test:watch": "reflex -g 'test/**/test*' mocha --require test/hooks.js {}",
     "gateway": "krakend run --config gateway/api.json",
+    "gateway:dev": "nodemon --watch gateway/api-development.json --exec 'krakend run --config gateway/api-development.json'",
     "jwk-server": "caddy file-server --listen 127.0.0.1:3099 jwk/",
     "migrate": "migrate -database $GO_DATABASE_URL -path ./migrations up"
   },

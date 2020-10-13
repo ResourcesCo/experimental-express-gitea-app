@@ -20,5 +20,11 @@ module.exports = function initSessionRoutes({app, users, tokens}) {
       });
   };
 
+  function currentSessionHandler(req, res) {
+    console.log('authorization header', req.header('Authorization'));
+    res.send({});
+  }
+
   app.post('/sessions', loginHandler);
+  app.get('/sessions/current', currentSessionHandler);
 };

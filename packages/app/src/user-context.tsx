@@ -4,7 +4,7 @@ import { ACCESS_TOKEN_STORAGE_KEY, ACCESS_TOKEN_EXPIRES_AT_STORAGE_KEY, REFRESH_
 interface ClientFetchInfo {
   method?: string;
   body?: object;
-  authenticated: boolean;
+  authenticated?: boolean;
 }
 
 export class Client {
@@ -53,9 +53,9 @@ export class Client {
 
   async fetch(
     url: string,
-    { method, body, authenticated = true }: ClientFetchInfo
+    { method, body, authenticated = true }: ClientFetchInfo = {}
   ) {
-    const resp = await fetch(url, {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}${url}`, {
       method: method || (body ? "POST" : "GET"),
       headers: {
         ...(body ? { "Content-Type": "application/json" } : undefined),
@@ -73,7 +73,7 @@ export class Client {
   }
 
   async login({ token }: { token: string }) {
-    const resp = await this.fetch(`${process.env.NEXT_PUBLIC_API_BASE}/sessions`, {
+    const resp = await this.fetch('/sessions', {
       authenticated: false,
       body: { token },
     });
@@ -81,6 +81,7 @@ export class Client {
       this._accessToken = resp.body.accessToken;
       this._accessTokenExpiresAt = new Date(resp.body.accessTokenExpiresAt);
       this._refreshToken = resp.body.refreshToken;
+      this.saveTokens();
       if (this.onLoggedInStatusChanged) {
         this.onLoggedInStatusChanged({loggedIn: true});
       }

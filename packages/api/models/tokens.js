@@ -13,7 +13,7 @@ function makeTokens({userId, sessionId}) {
 	return {
 		accessToken: makeToken({userId, sessionId, tokenType: 'access', expiresAfter: accessExpiresIn}),
 		accessTokenExpiresAt: (new Date()).valueOf() + (accessExpiresIn * 1000),
-		refreshToken: makeToken({userId, sessionId, tokenType: 'refresh', expiresAfter: 14 * 24 * 60 * 60})
+		refreshToken: makeToken({userId, sessionId, tokenType: 'refresh', expiresAfter: 14 * 24 * 60 * 60}),
 	};
 }
 
