@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "PORT=3002 node server.js",
+    "dev": "PORT=3002 nodemon server.js",
     "test": "yarn run test:migrate:drop && yarn test:migrate && yarn test:run",
     "test:migrate:drop": "migrate -database $GO_TEST_DATABASE_URL -path ./migrations drop -f",
     "test:migrate": "migrate -database $GO_TEST_DATABASE_URL -path ./migrations up",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "ava": "^3.12.1",
+    "nodemon": "^2.0.5",
     "xo": "^0.33.0"
   }
 }

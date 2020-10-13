@@ -3,7 +3,6 @@ const GitHubStrategy = require('passport-github');
 const GiteaStrategy = require('passport-gitea');
 const GitLabStrategy = require('passport-gitlab2');
 const auth = require('./auth');
-const users = require('./auth/models/users');
 const { authenticate } = require('passport');
 
 const failureRedirect = `${process.env.APP_BASE}/login`;
@@ -38,7 +37,7 @@ function addProvider(
 	);
 }
 
-function addRoutes(app, db, {name}) {
+function addRoutes(app, users, {name}) {
 	app.get(`/auth/${name}`, (req, res, next) => {
 		const authenticator = passport.authenticate(name, {
 			session: false,
@@ -53,7 +52,7 @@ function addRoutes(app, db, {name}) {
 			const {accessToken, refreshToken, profile} = user;
 			const email = profile.emails[0].value;
 			users
-				.findOrCreateUser(db, {
+				.findOrCreateUser({
 					provider: name,
 					providerUserId: profile.id,
 					email,
@@ -61,7 +60,7 @@ function addRoutes(app, db, {name}) {
 					refreshToken
 				})
 				.then(user => {
-					return users.createLoginToken(db, {userId: user.id});
+					return users.createLoginToken({userId: user.id});
 				})
 				.then(token => {
 					res.redirect(
@@ -75,7 +74,7 @@ function addRoutes(app, db, {name}) {
 	);
 }
 
-function initPassport(app, db) {
+module.exports = function initPassport({app, users}) {
 	const providers = auth.providers.filter(({enabled}) => enabled !== false);
 	app.use(passport.initialize());
 	for (const provider of providers) {
@@ -83,8 +82,6 @@ function initPassport(app, db) {
 	}
 
 	for (const provider of providers) {
-		addRoutes(app, db, provider);
+		addRoutes(app, users, provider);
 	}
 }
-
-module.exports = initPassport;

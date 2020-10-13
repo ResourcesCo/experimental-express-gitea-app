@@ -66,7 +66,7 @@ export default function SignIn() {
             } else {
               window.localStorage.removeItem(AUTH_STATES_STORAGE_KEY);
             }
-            const resp = await client.login({ token });
+            await client.login({ token });
             router.replace('/');
           } else {
             console.warn('Invalid auth state', state);

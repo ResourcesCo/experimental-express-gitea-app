@@ -73,7 +73,7 @@ export class Client {
   }
 
   async login({ token }: { token: string }) {
-    const resp = await this.fetch(`${process.env.NEXT_PUBLIC_API_BASE}/login`, {
+    const resp = await this.fetch(`${process.env.NEXT_PUBLIC_API_BASE}/sessions`, {
       authenticated: false,
       body: { token },
     });

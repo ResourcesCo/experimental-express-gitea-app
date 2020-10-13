@@ -9,7 +9,9 @@
     "env-cmd": "^10.1.0"
   },
   "scripts": {
-    "start": "env-cmd --silent concurrently -k -n api,jwk,gateway,app 'cd packages/api && npm start' 'cd packages/api/config/jwk && caddy file-server --listen 127.0.0.1:3099' 'cd packages/api && sleep 1 && krakend run --config gateway/api-development.json' 'cd packages/app && yarn dev'",
+    "build": "env-cmd --use-shell --silent 'cd packages/app && yarn build'",
+    "start": "env-cmd --silent concurrently -k -n api,jwk,gateway,app 'cd packages/api && yarn start' 'cd packages/api/config/jwk && caddy file-server --listen 127.0.0.1:3099' 'cd packages/api && sleep 1 && krakend run --config gateway/api-development.json' 'cd packages/app && yarn dev'",
+    "dev": "env-cmd --silent concurrently -k -n api,jwk,gateway,app 'cd packages/api && yarn dev' 'cd packages/api/config/jwk && caddy file-server --listen 127.0.0.1:3099' 'cd packages/api && sleep 1 && krakend run --config gateway/api-development.json' 'cd packages/app && yarn dev'",
     "postinstall": "yarn api:install && yarn app:install",
     "test": "yarn api:test && yarn app:test",
     "test:integration": "env-cmd --silent concurrently -k --success first -n api,jwk,gateway,app,test 'cd packages/api && npm start' 'cd packages/api/config/jwk && caddy file-server --listen 127.0.0.1:3099' 'cd packages/api && sleep 1 && krakend run --config gateway/api-development.json' 'cd packages/app && yarn dev' 'cd packages/app && echo Waiting 5 seconds and running tests... && sleep 5 && yarn test'",
