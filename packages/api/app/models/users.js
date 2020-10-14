@@ -57,6 +57,17 @@ module.exports = function users(db) {
 				[id, userId, true, expiresAt, new Date(), new Date()]
 			);
 			return {id};
+		},
+		async getUserSession({userId, sessionId}) {
+			const result = await db.query(
+				'select * from user_sessions where id = $1 and user_id = $2', [sessionId, userId]
+			);
+			if (result.rows.length === 1) {
+				const {id, user_id, active, expires_at, created_at, updated_at} = result.rows[0];
+				if (active && new Date() < expires_at) {
+					return { id: id, userId: user_id, expiresAt: expires_at };
+				}
+			}
 		}
 	}
 }

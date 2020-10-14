@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const initPassport = require('./init-passport');
 const {Pool} = require('pg');
-const initUsers = require('./models/users');
-const tokens = require('./models/tokens');
-const initSessionRoutes = require('./routes/sessions');
+const initUsers = require('./app/models/users');
+const tokens = require('./app/models/tokens');
+const auth = require('./app/controllers/auth');
+const initSessionRoutes = require('./app/controllers/sessions');
 
 const db = new Pool({
 	connectionString: process.env.NODE_DATABASE_URL
@@ -18,6 +20,7 @@ const app = express();
 app.use(morgan('tiny'));
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 initPassport({app, users});
 
@@ -25,15 +28,7 @@ app.get('/', (req, res) => {
 	res.send('Hello World!');
 });
 
-app.get('/jwk/PrivateKeySet.json', (req, res) => {
-	// TODO: validate username/password w/ basic auth and send keys
-	res.send({});
-});
-
-app.get('/jwk/PublicKeySet.json', (req, res) => {
-	// TODO: validate username/password w/ basic auth and send keys
-	res.send({});
-});
+app.use(auth.sessionLoader({users, tokens}));
 
 initSessionRoutes({app, db, users, tokens});
 

@@ -64,7 +64,17 @@ export class Client {
       ...(body && { body: JSON.stringify(body) }),
     });
     // TODO: if token is expired, refresh token and retry
-    const respBody = await resp.json();
+    let respBody;
+    if (resp.ok) {
+      respBody = await resp.json();
+    } else {
+      try {
+        respBody = await resp.text();
+        respBody = JSON.parse(respBody);
+      } catch (err) {
+        // do nothing
+      }
+    }
     return {
       ...resp,
       ok: resp.ok,

@@ -1,7 +1,7 @@
 const test = require('ava');
 const {before, after} = test;
 const {Pool} = require('pg');
-const initUsers = require('../../models/users');
+const initUsers = require('../../app/models/users');
 
 let db;
 let users;
