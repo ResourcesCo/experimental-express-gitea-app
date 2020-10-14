@@ -25,7 +25,7 @@ app.use(cookieParser());
 initPassport({app, users});
 
 app.get('/', (req, res) => {
-	res.send('Hello World!');
+	res.send({});
 });
 
 app.use(auth.sessionLoader({users, tokens}));

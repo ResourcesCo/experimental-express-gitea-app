@@ -6,7 +6,7 @@ function makeToken({userId, sessionId, tokenType, expiresAfter}) {
 		iss: 'https://api.resources.co/',
 		sub: `u:${userId},${sessionId},${tokenType}`,
 		roles: ['user'],
-		exp: Math.floor(new Date().valueOf() / 1000) * expiresAfter
+		exp: Math.floor(new Date().valueOf() / 1000) + expiresAfter
 	};
 }
 
