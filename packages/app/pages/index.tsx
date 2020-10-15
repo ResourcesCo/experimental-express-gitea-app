@@ -5,8 +5,7 @@ const IndexPage = () => {
   const { state: { loggedIn }, client } = useContext(UserContext)!;
   useEffect(() => {
     (async () => {
-      const res = await client.fetch('/sessions/current');
-      console.log(res);
+      await client.fetch('/sessions/current');
     })();
   }, [loggedIn])
   return (

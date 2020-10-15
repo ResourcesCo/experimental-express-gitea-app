@@ -6,8 +6,9 @@ const initPassport = require('./init-passport');
 const {Pool} = require('pg');
 const initUsers = require('./app/models/users');
 const tokens = require('./app/models/tokens');
-const auth = require('./app/controllers/auth');
+const {sessionLoader, authenticate} = require('./app/controllers/auth');
 const initSessionRoutes = require('./app/controllers/sessions');
+const initTokenRoutes = require('./app/controllers/tokens');
 
 const db = new Pool({
 	connectionString: process.env.NODE_DATABASE_URL
@@ -28,9 +29,10 @@ app.get('/', (req, res) => {
 	res.send({});
 });
 
-app.use(auth.sessionLoader({users, tokens}));
+app.use(sessionLoader({users, tokens}));
 
 initSessionRoutes({app, db, users, tokens});
+initTokenRoutes({app, authenticate, tokens});
 
 app.listen(process.env.PORT, () => {
 	console.log(`Listening at http://localhost:${process.env.PORT}`);

@@ -67,6 +67,43 @@
           "disable_host_sanitize": false
         }
       ]
+    },
+    {
+      "endpoint": "/tokens/refresh",
+      "method": "POST",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/signer": {
+          "alg": "RS256",
+          "jwk-url": "http://127.0.0.1:3099/PrivateKeySet.json",
+          "kid": "devel",
+          "keys-to-sign": ["accessToken", "refreshToken"],
+          "disable_jwk_security": true
+        },
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "RS256",
+          "jwk-url": "http://127.0.0.1:3099/PublicKeySet.json",
+          "kid": "devel",
+          "cookie_key": "access_token",
+          "roles": ["user"],
+          "disable_jwk_security": true
+        }
+      },
+      "headers_to_pass": [
+        "Authorization",
+        "Cookie"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/tokens/refresh",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "extra_config": {},
+          "host": ["127.0.0.1:3002"],
+          "disable_host_sanitize": false
+        }
+      ]
     }
   ]
 }

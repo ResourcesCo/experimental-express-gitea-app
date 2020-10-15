@@ -5,6 +5,7 @@ interface ClientFetchInfo {
   method?: string;
   body?: object;
   authenticated?: boolean;
+  refresh?: boolean;
 }
 
 export class Client {
@@ -15,7 +16,7 @@ export class Client {
   onLoggedInStatusChanged?: (status: {loggedIn: boolean}) => void
 
   constructor() {
-    
+    setTimeout(() => this.refresh(), 2000)
   }
 
   loadTokens() {
@@ -32,10 +33,16 @@ export class Client {
   }
 
   saveTokens() {
-    if (typeof window !== 'undefined' && this._accessToken && this._accessTokenExpiresAt && this._refreshToken) {
-      window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, this._accessToken);
-      window.localStorage.setItem(ACCESS_TOKEN_EXPIRES_AT_STORAGE_KEY, this._accessTokenExpiresAt.valueOf().toString());
-      window.localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, this._refreshToken);
+    if (typeof window !== 'undefined') {
+      if (this._accessToken && this._accessTokenExpiresAt && this._refreshToken) {
+        window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, this._accessToken);
+        window.localStorage.setItem(ACCESS_TOKEN_EXPIRES_AT_STORAGE_KEY, this._accessTokenExpiresAt.valueOf().toString());
+        window.localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, this._refreshToken);
+      } else {
+        window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+        window.localStorage.removeItem(ACCESS_TOKEN_EXPIRES_AT_STORAGE_KEY);
+        window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
+      }
     }
   }
 
@@ -53,13 +60,14 @@ export class Client {
 
   async fetch(
     url: string,
-    { method, body, authenticated = true }: ClientFetchInfo = {}
-  ) {
+    { method, body, authenticated = true, refresh = false }: ClientFetchInfo = {}
+  ): Promise<{ ok: boolean, status ?: number, body?: any }> {
     const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}${url}`, {
       method: method || (body ? "POST" : "GET"),
       headers: {
         ...(body ? { "Content-Type": "application/json" } : undefined),
         ...(authenticated ? { Authorization: `Bearer ${this._accessToken}` } : undefined),
+        ...(refresh ? { Authorization: `Bearer ${this._refreshToken}` } : undefined),
       },
       ...(body && { body: JSON.stringify(body) }),
     });
@@ -74,10 +82,20 @@ export class Client {
       } catch (err) {
         // do nothing
       }
+      if (resp.status === 401) {
+        const refreshed = await this.refresh();
+        if (refreshed) {
+          return await this.fetch(url, {method, body, authenticated});
+        } else {
+          return {
+            ok: false,
+          }
+        }
+      }
     }
     return {
-      ...resp,
       ok: resp.ok,
+      status: resp.status,
       body: respBody,
     };
   }
@@ -97,6 +115,29 @@ export class Client {
       }
     }
     return resp;
+  }
+
+  async refresh() {
+    const resp = await this.fetch('/tokens/refresh', {
+      authenticated: false,
+      refresh: true,
+      body: {},
+    });
+    if (resp.ok) {
+      this._accessToken = resp.body.accessToken;
+      this._accessTokenExpiresAt = new Date(resp.body.accessTokenExpiresAt);
+      this._refreshToken = resp.body.refreshToken;
+      this.saveTokens();
+    } else if (resp.status === 401) {
+      this._accessToken = undefined
+      this._accessTokenExpiresAt = undefined
+      this._refreshToken = undefined
+      this.saveTokens();
+      if (this.onLoggedInStatusChanged) {
+        this.onLoggedInStatusChanged({loggedIn: true});
+      }
+    }
+    return false
   }
 }
 

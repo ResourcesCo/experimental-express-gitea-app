@@ -8,8 +8,8 @@ exports.sessionLoader = function sessionLoader({users, tokens}) {
       const tokenData = tokens.parseHeader(req.header('Authorization'));
       if (tokenData) {
         const {userId, sessionId, tokenType} = tokenData;
-        users.getUserSession({userId, sessionId}).then((err, sessionData) => {
-          res.session = { ...sessionData, tokenType }
+        users.getUserSession({userId, sessionId}).then(sessionData => {
+          req.session = { ...sessionData, tokenType }
           next();
         }).catch(err => {
           res.status(401).send({error: 'Error getting session.'});
@@ -24,7 +24,7 @@ exports.sessionLoader = function sessionLoader({users, tokens}) {
   }
 }
 
-exports.authenticate = function authenticate({users, tokens, tokenType = 'access'}) {
+exports.authenticate = function authenticate({tokenType = 'access'}) {
   return function authenticateHandler(req, res, next) {
     if (req.session?.tokenType !== tokenType) {
       res.status(401).send({error: 'Error getting session.'});
