@@ -15,10 +15,6 @@ export class Client {
   
   onLoggedInStatusChanged?: (status: {loggedIn: boolean}) => void
 
-  constructor() {
-    setTimeout(() => this.refresh(), 2000)
-  }
-
   loadTokens() {
     if (typeof window !== 'undefined') {
       const accessToken = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
@@ -61,7 +57,18 @@ export class Client {
   async fetch(
     url: string,
     { method, body, authenticated = true, refresh = false }: ClientFetchInfo = {}
-  ): Promise<{ ok: boolean, status ?: number, body?: any }> {
+  ): Promise<{ ok: boolean, status ?: number, body?: any, error?: Error }> {
+    if (authenticated && !this.hasCurrentAccessToken) {
+      if (this.hasRefreshToken) {
+        const refreshed = await this.refresh();
+        if (!refreshed) {
+          return { ok: false, error: new Error('Error refreshing token') };
+        }
+      } else {
+        return { ok: false, error: new Error('Not logged in') };
+      }
+    }
+
     const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}${url}`, {
       method: method || (body ? "POST" : "GET"),
       headers: {
@@ -71,7 +78,6 @@ export class Client {
       },
       ...(body && { body: JSON.stringify(body) }),
     });
-    // TODO: if token is expired, refresh token and retry
     let respBody;
     if (resp.ok) {
       respBody = await resp.json();
@@ -87,9 +93,7 @@ export class Client {
         if (refreshed) {
           return await this.fetch(url, {method, body, authenticated});
         } else {
-          return {
-            ok: false,
-          }
+          return { ok: false, error: new Error('Error refreshing token') };
         }
       }
     }
