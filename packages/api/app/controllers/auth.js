@@ -24,7 +24,7 @@ exports.sessionLoader = function sessionLoader({users, tokens}) {
   }
 }
 
-exports.authenticate = function authenticate({tokenType = 'access'}) {
+exports.authenticate = function authenticate({tokenType = 'access'} = {}) {
   return function authenticateHandler(req, res, next) {
     if (req.session?.tokenType !== tokenType) {
       res.status(401).send({error: 'Error getting session.'});

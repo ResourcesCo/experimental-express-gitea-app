@@ -1,6 +1,6 @@
-import { useContext, useEffect, FunctionComponent } from 'react';
+import { useContext, useEffect, FunctionComponent, useState } from 'react';
 import NextLink from 'next/link';
-import { AppBar, Toolbar, Link, Avatar } from '@material-ui/core';
+import { AppBar, Toolbar, Link, Avatar, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import UserContext from "../../user-context";
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -54,15 +54,24 @@ const MainAppBar: FunctionComponent = ({}) => {
 
 const Layout: FunctionComponent = ({children}) => {
   const { state: { loggedIn }, client } = useContext(UserContext)!;
+  const [user, setUser] = useState(undefined);
 
   useEffect(() => {
     (async () => {
-      await client.fetch('/sessions/current');
+      const resp = await client.fetch('/sessions/current');
+      if (resp.ok && resp.body.user) {
+        setUser(resp.body.user);
+      }
     })();
   }, [loggedIn])
 
   return <>
     { loggedIn && <MainAppBar /> }
+    { (user?.active === false) && <Dialog open={true}>
+      <DialogTitle>Sign Up</DialogTitle>
+      <DialogContent></DialogContent>
+      <DialogActions></DialogActions>
+    </Dialog> }
     {children}
   </>
 };

@@ -1,4 +1,4 @@
-module.exports = function initSessionRoutes({app, users, tokens}) {
+module.exports = function initSessionRoutes({app, authenticate, users, tokens}) {
   function loginHandler(req, res) {
     let userId;
     users
@@ -21,9 +21,14 @@ module.exports = function initSessionRoutes({app, users, tokens}) {
   };
 
   function currentSessionHandler(req, res) {
-    res.send({});
+    const { userId } = req.session;
+    users.getUser({id: userId}).then(user => {
+      res.send({user});
+    }).catch(err => {
+      next(err);
+    });
   }
 
   app.post('/sessions', loginHandler);
-  app.get('/sessions/current', currentSessionHandler);
+  app.get('/sessions/current', authenticate(), currentSessionHandler);
 };

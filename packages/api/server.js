@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 
 app.use(sessionLoader({users, tokens}));
 
-initSessionRoutes({app, db, users, tokens});
+initSessionRoutes({app, authenticate, db, users, tokens});
 initTokenRoutes({app, authenticate, tokens});
 
 app.listen(process.env.PORT, () => {
