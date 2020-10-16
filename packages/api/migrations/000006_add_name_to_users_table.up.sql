@@ -1,0 +1,4 @@
+ALTER TABLE users ADD COLUMN first_name TEXT;
+ALTER TABLE users ADD COLUMN last_name TEXT;
+ALTER TABLE users ADD COLUMN accepted_terms_at TIMESTAMP;
+ALTER TABLE users ADD COLUMN signed_up_at TIMESTAMP;

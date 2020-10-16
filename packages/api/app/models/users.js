@@ -68,6 +68,62 @@ module.exports = function users(db) {
 					return { userId: user_id, sessionId: id, expiresAt: expires_at };
 				}
 			}
+		},
+		async getUser({id}) {
+			const result = await db.query('select * from users where id = $1', [id]);
+			if (result.rows.length === 1) {
+				const row = result.rows[0];
+				return {
+					id: row.id,
+					email: row.email,
+					active: row.active,
+					createdAt: row.created_at,
+					updatedAt: row.updated_at,
+					firstName: row.first_name,
+					lastName: row.last_name,
+					signedUpAt: row.signed_up_at,
+					acceptedTermsAt: row.accepted_terms_at
+				}
+			} else {
+				throw new Error('Error getting user profile');
+			}
+		},
+		async updateUser({id, email, firstName, lastName, signedUp, acceptedTerms}) {
+			if (!id) {
+				throw new Error('An ID is required to update a user record');
+			}
+			const sqlParams = [];
+			const params = [];
+			if (email) {
+				params.push(email);
+				sqlParams.push(`email = $${params.length}`);
+			}
+			if (firstName) {
+				params.push(firstName);
+				sqlParams.push(`first_name = $${params.length}`);
+			}
+			if (lastName) {
+				params.push(lastName);
+				sqlParams.push(`last_name = $${params.length}`);
+			}
+			if (signedUp) {
+				params.push(new Date());
+				sqlParams.push(`signed_up_at = $${params.length}`);
+			}
+			if (acceptedTerms) {
+				params.push(new Date());
+				sqlParams.push(`accepted_terms_at = $${params.length}`);
+			}
+			if (params.length > 0) {
+				params.push(id);
+				const result = await db.query(
+					`update users set ${sqlParams.join(', ')} where id = $${params.length}`,
+					params
+				);
+				if (result?.rowCount !== 1) {
+					throw new Error('Error updating user profile');
+				}
+			}
 		}
 	}
 }
