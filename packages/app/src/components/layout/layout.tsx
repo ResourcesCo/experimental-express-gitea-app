@@ -1,8 +1,10 @@
 import { useContext, useEffect, FunctionComponent, useState } from 'react';
 import NextLink from 'next/link';
-import { AppBar, Toolbar, Link, Avatar, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { AppBar, Toolbar, Link, Avatar } from '@material-ui/core';
 import UserContext from "../../user-context";
-import { makeStyles } from '@material-ui/core/styles'
+import User from '../../models/user';
+import SignupDialog from '../dialogs/signup-dialog';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -54,7 +56,7 @@ const MainAppBar: FunctionComponent = ({}) => {
 
 const Layout: FunctionComponent = ({children}) => {
   const { state: { loggedIn }, client } = useContext(UserContext)!;
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState<User|undefined>(undefined);
 
   useEffect(() => {
     (async () => {
@@ -63,15 +65,11 @@ const Layout: FunctionComponent = ({children}) => {
         setUser(resp.body.user);
       }
     })();
-  }, [loggedIn])
+  }, [loggedIn]);
 
   return <>
     { loggedIn && <MainAppBar /> }
-    { (user?.active === false) && <Dialog open={true}>
-      <DialogTitle>Sign Up</DialogTitle>
-      <DialogContent></DialogContent>
-      <DialogActions></DialogActions>
-    </Dialog> }
+    { (user?.active === false) && <SignupDialog user={user} /> }
     {children}
   </>
 };
