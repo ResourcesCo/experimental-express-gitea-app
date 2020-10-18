@@ -1,5 +1,6 @@
 import { useContext, useEffect, FunctionComponent, useState } from 'react';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { AppBar, Toolbar, Link, Avatar } from '@material-ui/core';
 import UserContext from "../../user-context";
 import User from '../../models/user';
@@ -27,7 +28,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MainAppBar: FunctionComponent = ({}) => {
+interface MainAppBarProps {
+  initials: string;
+}
+
+const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
   const classes = useStyles();
   return (
     <AppBar
@@ -48,7 +53,7 @@ const MainAppBar: FunctionComponent = ({}) => {
           </Link>
         </NextLink>
         <div className={classes.gap}></div>
-        <Avatar className={classes.avatar}>YN</Avatar>
+        <Avatar className={classes.avatar}>{initials}</Avatar>
       </Toolbar>
     </AppBar>
   )
@@ -57,19 +62,33 @@ const MainAppBar: FunctionComponent = ({}) => {
 const Layout: FunctionComponent = ({children}) => {
   const { state: { loggedIn }, client } = useContext(UserContext)!;
   const [user, setUser] = useState<User|undefined>(undefined);
+  const router = useRouter();
+
+  const loadUser = async () => {
+    const resp = await client.fetch('/sessions/current');
+    if (resp.ok && resp.body.user) {
+      setUser(resp.body.user);
+    }
+  }
+
+  const logout = () => {
+    client.logout();
+    setUser(undefined);
+    router.replace('/login');
+  }
 
   useEffect(() => {
-    (async () => {
-      const resp = await client.fetch('/sessions/current');
-      if (resp.ok && resp.body.user) {
-        setUser(resp.body.user);
-      }
-    })();
+    loadUser();
   }, [loggedIn]);
 
+  const initials = (
+    (user?.firstName && user?.lastName) ?
+    [user.firstName, user.lastName].map(s => s.substr(0, 1).toLocaleUpperCase()).join('') : 'YN'
+  )
+
   return <>
-    { loggedIn && <MainAppBar /> }
-    { (user?.active === false) && <SignupDialog user={user} /> }
+    { loggedIn && <MainAppBar initials={initials} /> }
+    { loggedIn && (user?.active === false) && <SignupDialog user={user} onComplete={loadUser} onCancel={logout} /> }
     {children}
   </>
 };

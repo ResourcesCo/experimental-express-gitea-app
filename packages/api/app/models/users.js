@@ -69,7 +69,7 @@ module.exports = function users(db) {
 				}
 			}
 		},
-		async getUser({id}) {
+		async getUser(id) {
 			const result = await db.query('select * from users where id = $1', [id]);
 			if (result.rows.length === 1) {
 				const row = result.rows[0];
@@ -88,7 +88,7 @@ module.exports = function users(db) {
 				throw new Error('Error getting user profile');
 			}
 		},
-		async updateUser({id, email, firstName, lastName, signedUp, acceptedTerms}) {
+		async updateUser(id, {email, active, firstName, lastName, signedUpAt, acceptedTermsAt}) {
 			if (!id) {
 				throw new Error('An ID is required to update a user record');
 			}
@@ -98,6 +98,10 @@ module.exports = function users(db) {
 				params.push(email);
 				sqlParams.push(`email = $${params.length}`);
 			}
+			if (active) {
+				params.push(active);
+				sqlParams.push(`active = $${params.length}`);
+			}
 			if (firstName) {
 				params.push(firstName);
 				sqlParams.push(`first_name = $${params.length}`);
@@ -106,12 +110,12 @@ module.exports = function users(db) {
 				params.push(lastName);
 				sqlParams.push(`last_name = $${params.length}`);
 			}
-			if (signedUp) {
-				params.push(new Date());
+			if (signedUpAt) {
+				params.push(signedUpAt);
 				sqlParams.push(`signed_up_at = $${params.length}`);
 			}
-			if (acceptedTerms) {
-				params.push(new Date());
+			if (acceptedTermsAt) {
+				params.push(acceptedTermsAt);
 				sqlParams.push(`accepted_terms_at = $${params.length}`);
 			}
 			if (params.length > 0) {
@@ -121,8 +125,10 @@ module.exports = function users(db) {
 					params
 				);
 				if (result?.rowCount !== 1) {
-					throw new Error('Error updating user profile');
+					throw new Error('Error updating user');
 				}
+			} else {
+				throw new Error('At least one field must be given to update user');
 			}
 		}
 	}

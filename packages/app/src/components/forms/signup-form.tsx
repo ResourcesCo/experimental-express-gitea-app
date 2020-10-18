@@ -1,15 +1,18 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
 import { DialogContentText, TextField, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import User from '../../models/user';
 
 interface DialogProps {
   user: User;
+  error?: string;
   onChange: (user: User) => void;
 }
 
-const SignupDialog: FunctionComponent<DialogProps> = ({user, onChange}) => {
+const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) => {
   return (
     <>
+      {error && <Alert severity="error">{error}</Alert>}
       <DialogContentText>
         Welcome! To complete signup, please enter some information:
       </DialogContentText>

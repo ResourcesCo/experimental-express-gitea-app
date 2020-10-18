@@ -6,11 +6,14 @@ import SignupForm from '../forms/signup-form';
 
 interface DialogProps {
   user: User;
+  onComplete: () => void;
+  onCancel: () => void;
 }
 
-const SignupDialog: FunctionComponent<DialogProps> = ({user: initialUser}) => {
+const SignupDialog: FunctionComponent<DialogProps> = ({user: initialUser, onComplete, onCancel}) => {
   const {client} = useContext(UserContext)!;
   const [user, setUser] = useState(initialUser);
+  const [error, setError] = useState<string | undefined>(undefined);
   const valid = (
     ((user.email || '').trim().length > 0) &&
     ((user.firstName || '').trim().length > 0) &&
@@ -18,19 +21,27 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user: initialUser}) => {
     user.acceptedTermsAt
   )
   const handleSignUp = async () => {
-    const resp = await client.fetch(`/users/${user.id}`, {
-      method: 'post',
-      body: user
+    setError(undefined);
+    const resp = await client.fetch(`/users/current`, {
+      method: 'PATCH',
+      body: {
+        ...user,
+        active: !!user.acceptedTermsAt,
+        acceptedTermsAt: user.acceptedTermsAt ? new Date() : null,
+        signedUpAt: user.acceptedTermsAt ? new Date() : null,
+      }
     });
     if (resp.ok) {
-      console.log('Completed signup!');
+      onComplete();
+    } else {
+      setError('Error saving your account. Please try again.');
     }
   }
   return (
-    <Dialog open={true}>
+    <Dialog open={true} onClose={onCancel}>
       <DialogTitle>Sign Up</DialogTitle>
       <DialogContent>
-        <SignupForm user={user} onChange={user => setUser(user)} />
+        <SignupForm user={user} error={error} onChange={user => setUser(user)} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleSignUp} color="primary" disabled={!valid}>

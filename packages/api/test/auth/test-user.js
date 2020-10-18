@@ -38,14 +38,13 @@ test('sign up user', async t => {
 		accessToken: 'abf3343112',
 		refreshToken: 'abf2332343242'
 	});
-	const result2 = await users.updateUser({
-		id: result1.id,
+	const result2 = await users.updateUser(result1.id, {
 		firstName: 'J',
 		lastName: 'Test',
 		signedUp: true,
 		acceptedTerms: true
 	});
-	const result3 = await users.getUser({id: result1.id});
+	const result3 = await users.getUser(result1.id);
 	t.is(result3.firstName, 'J');
 	t.is(result3.lastName, 'Test');
 	t.truthy(result3.acceptedTermsAt);

@@ -133,15 +133,19 @@ export class Client {
       this._refreshToken = resp.body.refreshToken;
       this.saveTokens();
     } else if (resp.status === 401) {
-      this._accessToken = undefined
-      this._accessTokenExpiresAt = undefined
-      this._refreshToken = undefined
-      this.saveTokens();
-      if (this.onLoggedInStatusChanged) {
-        this.onLoggedInStatusChanged({loggedIn: true});
-      }
+      this.logout();
     }
     return false
+  }
+
+  logout() {
+    this._accessToken = undefined
+    this._accessTokenExpiresAt = undefined
+    this._refreshToken = undefined
+    this.saveTokens();
+    if (this.onLoggedInStatusChanged) {
+      this.onLoggedInStatusChanged({loggedIn: false});
+    }
   }
 }
 

@@ -5,4 +5,5 @@ export default interface User {
   firstName?: string;
   lastName?: string;
   acceptedTermsAt?: Date;
+  signedUpAt?: Date;
 }

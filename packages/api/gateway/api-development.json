@@ -54,7 +54,8 @@
       },
       "headers_to_pass": [
         "Authorization",
-        "Cookie"
+        "Cookie",
+        "Content-Type"
       ],
       "backend": [
         {
@@ -62,6 +63,68 @@
           "encoding": "json",
           "sd": "static",
           "method": "GET",
+          "extra_config": {},
+          "host": ["127.0.0.1:3002"],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/users/current",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "RS256",
+          "jwk-url": "http://127.0.0.1:3099/PublicKeySet.json",
+          "kid": "devel",
+          "cookie_key": "access_token",
+          "roles": ["user"],
+          "disable_jwk_security": true
+        }
+      },
+      "headers_to_pass": [
+        "Authorization",
+        "Cookie",
+        "Content-Type"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/users/current",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {},
+          "host": ["127.0.0.1:3002"],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/users/current",
+      "method": "PATCH",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "RS256",
+          "jwk-url": "http://127.0.0.1:3099/PublicKeySet.json",
+          "kid": "devel",
+          "cookie_key": "access_token",
+          "roles": ["user"],
+          "disable_jwk_security": true
+        }
+      },
+      "headers_to_pass": [
+        "Authorization",
+        "Cookie",
+        "Content-Type"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/users/current",
+          "encoding": "json",
+          "sd": "static",
+          "method": "PATCH",
           "extra_config": {},
           "host": ["127.0.0.1:3002"],
           "disable_host_sanitize": false
@@ -91,7 +154,8 @@
       },
       "headers_to_pass": [
         "Authorization",
-        "Cookie"
+        "Cookie",
+        "Content-Type"
       ],
       "backend": [
         {

@@ -22,10 +22,10 @@ module.exports = function initSessionRoutes({app, authenticate, users, tokens}) 
 
   function currentSessionHandler(req, res) {
     const { userId } = req.session;
-    users.getUser({id: userId}).then(user => {
+    users.getUser(userId).then(user => {
       res.send({user});
     }).catch(err => {
-      next(err);
+      res.status(500).send({error: 'Error getting current session.'});
     });
   }
 
