@@ -1,25 +1,27 @@
 const test = require('ava');
-const {before, after} = test;
 const {Pool} = require('pg');
 const initUsers = require('../../app/models/users');
 
 let db;
 let users;
 
-before(() => {
+test.before(() => {
 	db = new Pool({
 		connectionString: process.env.NODE_TEST_DATABASE_URL
 	});
 	users = initUsers(db);
 });
 
-after(async () => {
+test.afterEach(async () => {
 	await db.query('delete from users');
 	await db.query('delete from oauth_sessions');
+});
+
+test.after(async () => {
 	await db.end();
 });
 
-test('create user', async t => {
+test.serial('create user', async t => {
 	const result = await users.findOrCreateUser({
 		provider: 'github',
 		providerUserId: '1341',
@@ -30,7 +32,7 @@ test('create user', async t => {
 	t.true(typeof result.id === 'string');
 });
 
-test('sign up user', async t => {
+test.serial('sign up user', async t => {
 	const result1 = await users.findOrCreateUser({
 		provider: 'github',
 		providerUserId: '1500',
@@ -39,10 +41,11 @@ test('sign up user', async t => {
 		refreshToken: 'abf2332343242'
 	});
 	const result2 = await users.updateUser(result1.id, {
+		active: true,
 		firstName: 'J',
 		lastName: 'Test',
-		signedUp: true,
-		acceptedTerms: true
+		signedUpAt: new Date(),
+		acceptedTermsAt: new Date(),
 	});
 	const result3 = await users.getUser(result1.id);
 	t.is(result3.firstName, 'J');

@@ -124,7 +124,7 @@ module.exports = function users(db) {
 					`update users set ${sqlParams.join(', ')} where id = $${params.length}`,
 					params
 				);
-				if (result?.rowCount !== 1) {
+				if (result && result.rowCount !== 1) {
 					throw new Error('Error updating user');
 				}
 			} else {
