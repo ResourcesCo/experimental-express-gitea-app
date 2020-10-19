@@ -78,7 +78,13 @@ const Layout: FunctionComponent = ({children}) => {
   }
 
   useEffect(() => {
-    loadUser();
+    if (loggedIn) {
+      loadUser();
+    } else {
+      client.logout();
+      setUser(undefined);
+      router.replace('/login');
+    }
   }, [loggedIn]);
 
   const initials = (

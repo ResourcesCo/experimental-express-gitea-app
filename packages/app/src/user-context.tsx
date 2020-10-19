@@ -132,6 +132,7 @@ export class Client {
       this._accessTokenExpiresAt = new Date(resp.body.accessTokenExpiresAt);
       this._refreshToken = resp.body.refreshToken;
       this.saveTokens();
+      return true;
     } else if (resp.status === 401) {
       this.logout();
     }
