@@ -1,30 +1,41 @@
 import { useContext, useEffect, FunctionComponent, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { AppBar, Toolbar, Link, Avatar } from '@material-ui/core';
+import { AppBar, Toolbar, Link, Avatar, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import teal from '@material-ui/core/colors/teal';
 import UserContext from "../../user-context";
 import User from '../../models/user';
 import SignupDialog from '../dialogs/signup-dialog';
-import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.default,
   },
   toolbar: {
     flexWrap: 'wrap',
-    minHeight: 36,
+    minHeight: 44,
     paddingLeft: theme.spacing(1.5),
     paddingRight: theme.spacing(1.5),
   },
   gap: {
     flexGrow: 1,
   },
+  avatarButton: {
+    minWidth: 0,
+    '&:hover': {
+      backgroundColor: theme.palette.background.default,
+    }
+  },
   avatar: {
-    height: 24,
-    width: 24,
-    fontSize: '14px',
-    backgroundColor: 'teal',
+    height: 32,
+    width: 32,
+    fontSize: '18px',
+    backgroundColor: teal[600],
+    '&:hover': {
+      backgroundColor: teal[700],
+    }
   }
 }));
 
@@ -34,11 +45,12 @@ interface MainAppBarProps {
 
 const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
   const classes = useStyles();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   return (
     <AppBar
         position="static"
         color="default"
-        elevation={1}
+        elevation={0}
         className={classes.appBar}
     >
       <Toolbar className={classes.toolbar}>
@@ -49,11 +61,16 @@ const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
             color="inherit"
             noWrap
           >
-            RESOURCES.CO
+            Home
           </Link>
         </NextLink>
         <div className={classes.gap}></div>
-        <Avatar className={classes.avatar}>{initials}</Avatar>
+        <Button
+          className={classes.avatarButton}
+          disableRipple onClick={() => false}
+        >
+          <Avatar className={classes.avatar}>{initials}</Avatar>
+        </Button>
       </Toolbar>
     </AppBar>
   )
