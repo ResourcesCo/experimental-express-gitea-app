@@ -17,7 +17,6 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
         Welcome! To complete signup, please enter some information:
       </DialogContentText>
       <TextField
-        autoFocus
         margin="dense"
         id="name"
         label="Email Address"
@@ -28,7 +27,6 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
         fullWidth
       />
       <TextField
-        autoFocus
         margin="dense"
         id="name"
         label="First Name"
@@ -38,7 +36,6 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
         fullWidth
       />
       <TextField
-        autoFocus
         margin="dense"
         id="name"
         label="Last Name"
