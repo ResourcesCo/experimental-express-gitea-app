@@ -18,7 +18,7 @@
     "api:test": "env-cmd --use-shell --silent 'cd packages/api && yarn test'",
     "api:install": "cd packages/api && yarn install",
     "api:migrate": "env-cmd --use-shell --silent 'cd packages/api && yarn migrate'",
-    "app:test": "cd packages/app && yarn test",
+    "app:test": "env-cmd --use-shell --silent 'cd packages/app && yarn test'",
     "app:install": "cd packages/app && yarn install"
   }
 }

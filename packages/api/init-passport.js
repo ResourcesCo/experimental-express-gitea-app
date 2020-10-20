@@ -50,7 +50,8 @@ function addRoutes(app, users, {name}) {
 		passport.authenticate(name, {failureRedirect, session: false}),
 		({user, query: {state}}, res, next) => {
 			const {accessToken, refreshToken, profile} = user;
-			const email = profile.emails[0].value;
+			const hasEmail = Array.isArray(profile.emails) && profile.emails.length >= 1;
+			const email = hasEmail ? profile.emails[0].value : null;
 			users
 				.findOrCreateUser({
 					provider: name,
