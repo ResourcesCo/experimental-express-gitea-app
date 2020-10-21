@@ -6,6 +6,7 @@ describe('GitHub', () => {
     await page.fill('[name=login]', process.env.GITHUB_TEST_USERNAME);
     await page.fill('[name=password]', process.env.GITHUB_TEST_PASSWORD);
     await page.click('[type=submit]');
-    await expect(page).toHaveText('Home');
+    await page.waitForSelector('"Sign Up"');
+    await expect(page).toHaveText('Sign Up');
   });
 });
