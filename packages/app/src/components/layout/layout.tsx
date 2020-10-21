@@ -45,7 +45,7 @@ interface MainAppBarProps {
 
 const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
   const classes = useStyles();
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  // const [userMenuOpen, setUserMenuOpen] = useState(false);
   return (
     <AppBar
         position="static"
