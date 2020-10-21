@@ -20,6 +20,9 @@ app-e2e:
   image: mcr.microsoft.com/playwright:bionic
   services:
     - postgres
+  artifacts:
+    paths:
+      - packages/app/__tests__/screenshots
   variables:
     POSTGRES_DB: resourcesco-app
     POSTGRES_USER: resourcesco-app
