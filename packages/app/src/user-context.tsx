@@ -1,4 +1,5 @@
 import React, { Dispatch } from "react";
+import User from './models/user';
 import { ACCESS_TOKEN_STORAGE_KEY, ACCESS_TOKEN_EXPIRES_AT_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY } from './constants';
 
 interface ClientFetchInfo {
@@ -152,13 +153,19 @@ export class Client {
 
 interface UserState {
   loggedIn: boolean;
+  user?: User;
 }
 
 interface PlainUserAction {
   type: "loggedIn" | "loggedOut";
 }
 
-type UserAction = PlainUserAction;
+interface UserLoadedAction {
+  type: "userLoaded";
+  user: User;
+}
+
+type UserAction = PlainUserAction | UserLoadedAction;
 
 export const initialState = { loggedIn: false };
 
@@ -167,7 +174,9 @@ export function userReducer(state: UserState, action: UserAction): UserState {
     case "loggedIn":
       return { ...state, loggedIn: true };
     case "loggedOut":
-      return { ...state, loggedIn: false };
+      return { ...state, loggedIn: false, user: undefined };
+    case "userLoaded":
+      return { ...state, user: action.user };
   }
 }
 

@@ -1,5 +1,5 @@
-import { FunctionComponent } from 'react';
-import { Avatar, Button, Popover } from '@material-ui/core';
+import { useContext, FunctionComponent } from 'react';
+import { Avatar, Button, Link, Popover } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import teal from '@material-ui/core/colors/teal';
 import {
@@ -7,6 +7,7 @@ import {
   bindTrigger,
   bindPopover,
 } from 'material-ui-popup-state/hooks';
+import UserContext from "../../user-context";
 
 const useStyles = makeStyles((theme) => ({
   avatarButton: {
@@ -26,16 +27,25 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-interface UserMenuProps {
-  initials: string;
-}
-
-const UserMenu: FunctionComponent<UserMenuProps> = ({initials}) => {
+const UserMenu: FunctionComponent = ({}) => {
   const classes = useStyles();
+  const { state: { loggedIn, user }, client, dispatch } = useContext(UserContext)!;
+  
   const popupState = usePopupState({
     variant: 'popover',
     popupId: 'userMenu',
   });
+
+  const initials = (
+    (user?.firstName && user?.lastName) ?
+    [user.firstName, user.lastName].map(s => s.substr(0, 1).toLocaleUpperCase()).join('') : null
+  );
+
+  const logout = () => {
+    client.logout();
+    dispatch({type: 'loggedOut'});
+  }
+
   return (
     <>
       <Button
@@ -57,7 +67,7 @@ const UserMenu: FunctionComponent<UserMenuProps> = ({initials}) => {
         }}
         elevation={2}
       >
-        Test
+        { loggedIn && <Link onClick={logout}>Log Out</Link> }
       </Popover>
     </>
   )
