@@ -1,11 +1,11 @@
 import { useContext, useEffect, FunctionComponent, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { AppBar, Toolbar, Link, Avatar, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import teal from '@material-ui/core/colors/teal';
 import UserContext from "../../user-context";
 import User from '../../models/user';
+import UserMenu from './user-menu';
 import SignupDialog from '../dialogs/signup-dialog';
 
 const useStyles = makeStyles((theme) => ({
@@ -22,21 +22,6 @@ const useStyles = makeStyles((theme) => ({
   gap: {
     flexGrow: 1,
   },
-  avatarButton: {
-    minWidth: 0,
-    '&:hover': {
-      backgroundColor: theme.palette.background.default,
-    }
-  },
-  avatar: {
-    height: 32,
-    width: 32,
-    fontSize: '18px',
-    backgroundColor: teal[600],
-    '&:hover': {
-      backgroundColor: teal[700],
-    }
-  }
 }));
 
 interface MainAppBarProps {
@@ -45,7 +30,6 @@ interface MainAppBarProps {
 
 const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
   const classes = useStyles();
-  // const [userMenuOpen, setUserMenuOpen] = useState(false);
   return (
     <AppBar
         position="static"
@@ -65,12 +49,7 @@ const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
           </Link>
         </NextLink>
         <div className={classes.gap}></div>
-        <Button
-          className={classes.avatarButton}
-          disableRipple onClick={() => false}
-        >
-          <Avatar className={classes.avatar}>{initials}</Avatar>
-        </Button>
+        <UserMenu initials={initials} />
       </Toolbar>
     </AppBar>
   )

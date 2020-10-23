@@ -22,7 +22,8 @@ app-e2e:
     - postgres
   artifacts:
     paths:
-      - packages/app/__tests__/screenshots
+      - packages/app/__tests__/screenshots/
+    expire_in: 1 week
   variables:
     POSTGRES_DB: resourcesco-app
     POSTGRES_USER: resourcesco-app
