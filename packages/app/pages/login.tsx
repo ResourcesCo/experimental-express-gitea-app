@@ -106,6 +106,15 @@ export default function SignIn() {
           >
             Sign In with GitLab
           </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={() => redirectToSignIn("gitea")}
+          >
+            Sign In with Gitea
+          </Button>
         </form>
       </div>
     </Container>

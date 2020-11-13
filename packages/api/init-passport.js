@@ -1,6 +1,6 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github');
-const GiteaStrategy = require('passport-gitea');
+const GiteaStrategy = require('@resources/passport-gitea');
 const GitLabStrategy = require('passport-gitlab2');
 const auth = require('./auth');
 const { authenticate } = require('passport');

@@ -42,6 +42,7 @@ const UserMenu: FunctionComponent = ({}) => {
   );
 
   const logout = () => {
+    popupState.close();
     client.logout();
     dispatch({type: 'loggedOut'});
   }
