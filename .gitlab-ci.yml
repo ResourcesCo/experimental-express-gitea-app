@@ -23,7 +23,7 @@ gitea:
     - docker:19.03.12-dind
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build packages/api/test/fixtures/gitea -t gitea-test
+    - docker build packages/api/test/fixtures/gitea -t $CI_REGISTRY/resourcesco/app/gitea-test:latest
     - docker push $CI_REGISTRY/resourcesco/app/gitea-test:latest
 
 app-e2e:
