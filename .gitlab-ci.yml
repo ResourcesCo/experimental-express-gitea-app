@@ -17,6 +17,10 @@ api:
     - yarn api:test
 
 gitea:
+  image: docker:19.03.12
+  stage: build
+  services:
+    - docker:19.03.12-dind
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build packages/api/test/fixtures/gitea -t gitea-test
