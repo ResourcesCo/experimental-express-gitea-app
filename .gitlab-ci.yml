@@ -54,9 +54,9 @@ app-e2e:
     INSTALL_LOCK: 'true'
     SECRET_KEY: generate
     DISABLE_SSH: 'true'
-    ENABLE_OPENID_SIGNIN: false
-    ENABLE_OPENID_SIGNUP: false
-    DISABLE_REGISTRATION: true
+    ENABLE_OPENID_SIGNIN: 'false'
+    ENABLE_OPENID_SIGNUP: 'false'
+    DISABLE_REGISTRATION: 'true'
     ROOT_URL: http://localhost:3000
     GITEA_USERNAME: user1
     GITEA_PASSWORD: 0penSesme3234
