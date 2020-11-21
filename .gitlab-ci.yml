@@ -30,6 +30,8 @@ app-e2e:
   image: mcr.microsoft.com/playwright:bionic
   services:
     - postgres
+    - name: resourcesco/app/gitea-test
+      alias: gitea
   artifacts:
     paths:
       - packages/app/__tests__/screenshots/
@@ -48,8 +50,19 @@ app-e2e:
     NEXT_PUBLIC_APP_BASE: http://localhost:3000
     NEXT_PUBLIC_API_BASE: http://localhost:3001
     NEXT_PUBLIC_API_BASE_OAUTH: http://localhost:3002
+    DB_TYPE: sqlite3
+    INSTALL_LOCK: 'true'
+    SECRET_KEY: generate
+    DISABLE_SSH: 'true'
+    ENABLE_OPENID_SIGNIN: false
+    ENABLE_OPENID_SIGNUP: false
+    DISABLE_REGISTRATION: true
+    ROOT_URL: http://localhost:3000
+    GITEA_USERNAME: user1
+    GITEA_PASSWORD: 0penSesme3234
+    GITEA_EMAIL: test@example.com
   script:
-    - apt-get install -y postgresql-client libpq-dev
+    - apt-get install -y postgresql-client libpq-dev curl
     - packages/api/scripts/install-go-binaries-linux-amd64.sh
     - export PATH=$(pwd)/packages/api/bin:$PATH
     - yarn install
@@ -58,4 +71,5 @@ app-e2e:
     - yarn api:migrate
     - mv $PRIVATE_JWK_KEY_FILE packages/api/config/jwk/PrivateKeySet.json
     - mv $PUBLIC_JWK_KEY_FILE packages/api/config/jwk/PublicKeySet.json
+    - 'curl -X POST "http://gitea:3000/api/v1/user/applications/oauth2" -H  "accept: application/json" -H  "authorization: Basic dXNlcjE6MHBlblNlc21lMzIzNA==" -H  "Content-Type: application/json" -d "{  \"name\": \"MyApp\",  \"redirect_uris\": [    \"http://localhost:3000/auth/gitea\"  ]}"'
     - yarn test:integration
