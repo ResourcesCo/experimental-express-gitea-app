@@ -13,6 +13,25 @@ const strategies = {
 	gitlab: GitLabStrategy
 };
 
+function p(value) {
+	console.log(value);
+	return value
+}
+
+function giteaParams({name, authorizationUrl, tokenUrl, userProfileUrl}) {
+	if (process.env[`${name.toUpperCase()}_BASE_URL`]) {
+		const baseUrl = process.env[`${name.toUpperCase()}_BASE_URL`];
+		return p({
+			name,
+			authorizationURL: `${baseUrl}/login/oauth/authorize`,
+      tokenURL: `${baseUrl}/login/oauth/access_token`,
+      userProfileURL: `${baseUrl}/api/v1/user`,
+		});
+	} else {
+		return {name, authorizationUrl, tokenUrl, userProfileUrl};
+	}
+}
+
 function addProvider(
 	app,
 	{name, strategy: strategyArg, authorizationUrl, tokenUrl, userProfileUrl}
@@ -27,7 +46,7 @@ function addProvider(
 				clientSecret: process.env[`${name.toUpperCase()}_CLIENT_SECRET`],
 				callbackURL: `${process.env.API_BASE_OAUTH || process.env.API_BASE}/auth/${name}/callback`,
 				...(strategyName === 'gitea' ?
-					{name, authorizationUrl, tokenUrl, userProfileUrl} :
+					giteaParams({name, authorizationUrl, tokenUrl, userProfileUrl}) :
 					{})
 			},
 			(accessToken, refreshToken, profile, done) => {
