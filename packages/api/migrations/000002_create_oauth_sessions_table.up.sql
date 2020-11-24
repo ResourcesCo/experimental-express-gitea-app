@@ -6,6 +6,6 @@ create table oauth_sessions (
   access_token text not null,
   refresh_token text,
   created_at timestamp not null,
-  updated_at timestamp not null 
+  updated_at timestamp not null
 );
 create unique index oauth_sessions_by_provider on oauth_sessions (provider, provider_user_id);
