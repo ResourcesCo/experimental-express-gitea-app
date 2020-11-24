@@ -58,6 +58,7 @@ app-e2e:
     ENABLE_OPENID_SIGNUP: 'false'
     DISABLE_REGISTRATION: 'true'
     ROOT_URL: http://localhost:3000
+    GITEA_BASE_URL: http://gitea:3000
     GITEA_USERNAME: user1
     GITEA_PASSWORD: 0penSesme3234
     GITEA_EMAIL: test@example.com
