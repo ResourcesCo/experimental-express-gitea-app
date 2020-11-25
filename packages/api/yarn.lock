@@ -150,6 +150,13 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
+"@resources/passport-gitea@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@resources/passport-gitea/-/passport-gitea-0.0.3.tgz#b4375a30d592a01c8e7b58113779a5867cf896fa"
+  integrity sha512-c3fllIX5Ed0Y6A+gykNyc3kMe03mpRFdCG7yG4fXUGDHVsvHG9CKAo8ZdOkh6PDOTI7QST1LEhWh8+VYm/D++A==
+  dependencies:
+    passport-oauth2 "1.x.x"
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -3787,13 +3794,6 @@ pascalcase@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
-
-passport-gitea@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/passport-gitea/-/passport-gitea-0.0.2.tgz#af2428d1dddb60d785101ac52516bf6eac13532f"
-  integrity sha512-Z5erfGLwIvCkcMi/BgS+geVY3nf3oKr3AoQWtxIRim4ivkDAWhxQd5jnhyxv5RiAmG8rI3ncpEDwa33KWNC4aA==
-  dependencies:
-    passport-oauth2 "1.x.x"
 
 passport-github@^1.1.0:
   version "1.1.0"

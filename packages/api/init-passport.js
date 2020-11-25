@@ -1,6 +1,6 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github');
-const GiteaStrategy = require('passport-gitea');
+const GiteaStrategy = require('@resources/passport-gitea');
 const GitLabStrategy = require('passport-gitlab2');
 const auth = require('./auth');
 const { authenticate } = require('passport');
@@ -12,6 +12,20 @@ const strategies = {
 	gitea: GiteaStrategy,
 	gitlab: GitLabStrategy
 };
+
+function giteaParams({name, authorizationUrl, tokenUrl, userProfileUrl}) {
+	if (process.env[`${name.toUpperCase()}_BASE_URL`]) {
+		const baseUrl = process.env[`${name.toUpperCase()}_BASE_URL`];
+		return {
+			name,
+			authorizationURL: `${baseUrl}/login/oauth/authorize`,
+      tokenURL: `${baseUrl}/login/oauth/access_token`,
+      userProfileURL: `${baseUrl}/api/v1/user`,
+		};
+	} else {
+		return {name, authorizationUrl, tokenUrl, userProfileUrl};
+	}
+}
 
 function addProvider(
 	app,
@@ -27,7 +41,7 @@ function addProvider(
 				clientSecret: process.env[`${name.toUpperCase()}_CLIENT_SECRET`],
 				callbackURL: `${process.env.API_BASE_OAUTH || process.env.API_BASE}/auth/${name}/callback`,
 				...(strategyName === 'gitea' ?
-					{name, authorizationUrl, tokenUrl, userProfileUrl} :
+					giteaParams({name, authorizationUrl, tokenUrl, userProfileUrl}) :
 					{})
 			},
 			(accessToken, refreshToken, profile, done) => {
@@ -50,7 +64,8 @@ function addRoutes(app, users, {name}) {
 		passport.authenticate(name, {failureRedirect, session: false}),
 		({user, query: {state}}, res, next) => {
 			const {accessToken, refreshToken, profile} = user;
-			const email = profile.emails[0].value;
+			const hasEmail = Array.isArray(profile.emails) && profile.emails.length >= 1;
+			const email = hasEmail ? profile.emails[0].value : null;
 			users
 				.findOrCreateUser({
 					provider: name,

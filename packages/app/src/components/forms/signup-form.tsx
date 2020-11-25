@@ -17,9 +17,8 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
         Welcome! To complete signup, please enter some information:
       </DialogContentText>
       <TextField
-        autoFocus
         margin="dense"
-        id="name"
+        id="email"
         label="Email Address"
         type="email"
         value={user.email}
@@ -28,9 +27,8 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
         fullWidth
       />
       <TextField
-        autoFocus
         margin="dense"
-        id="name"
+        id="first_name"
         label="First Name"
         value={user.firstName || ''}
         onChange={({target: {value}}) => onChange({...user, firstName: value})}
@@ -38,9 +36,8 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
         fullWidth
       />
       <TextField
-        autoFocus
         margin="dense"
-        id="name"
+        id="last_name"
         label="Last Name"
         value={user.lastName || ''}
         onChange={({target: {value}}) => onChange({...user, lastName: value})}
@@ -50,9 +47,10 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
       <FormControlLabel
         control={
           <Checkbox
+            id="accepted_terms"
             checked={!!user.acceptedTermsAt}
             onChange={({target: {checked}}) => onChange({...user, acceptedTermsAt: checked ? new Date() : undefined})}
-            name="termsAndConditions"
+            name="accepted_terms"
             color="primary"
           />
         }
