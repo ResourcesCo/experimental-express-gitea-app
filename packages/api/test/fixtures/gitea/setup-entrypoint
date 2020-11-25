@@ -1,0 +1,17 @@
+#!/bin/sh
+
+entrypoint echo called entrypoint
+
+if [ -z $SECRET_KEY ]; then
+  export SECRET_KEY="$(dd if=/dev/urandom bs=36 count=1 status=none | base64)"
+fi
+
+if [ -z $JWT_SECRET ]; then
+  export JWT_SECRET="$(dd if=/dev/urandom bs=36 count=1 status=none | base64)"
+fi
+
+envsubst < /etc/templates/app.ini > ${GITEA_CUSTOM}/conf/app.ini
+gitea migrate
+gitea admin user create --username $GITEA_USERNAME --password $GITEA_PASSWORD --email $GITEA_EMAIL --must-change-password=false
+
+exec entrypoint "$@"

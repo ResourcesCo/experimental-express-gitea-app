@@ -16,10 +16,22 @@ api:
     - yarn install
     - yarn api:test
 
+gitea:
+  image: docker:19.03.12
+  stage: build
+  services:
+    - docker:19.03.12-dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build packages/api/test/fixtures/gitea -t $CI_REGISTRY/resourcesco/app/gitea-test:latest
+    - docker push $CI_REGISTRY/resourcesco/app/gitea-test:latest
+
 app-e2e:
   image: mcr.microsoft.com/playwright:bionic
   services:
     - postgres
+    - name: $CI_REGISTRY/resourcesco/app/gitea-test:latest
+      alias: gitea
   variables:
     POSTGRES_DB: resourcesco-app
     POSTGRES_USER: resourcesco-app
@@ -34,8 +46,20 @@ app-e2e:
     NEXT_PUBLIC_APP_BASE: http://localhost:3000
     NEXT_PUBLIC_API_BASE: http://localhost:3001
     NEXT_PUBLIC_API_BASE_OAUTH: http://localhost:3002
+    DB_TYPE: sqlite3
+    INSTALL_LOCK: 'true'
+    SECRET_KEY: generate
+    DISABLE_SSH: 'true'
+    ENABLE_OPENID_SIGNIN: 'false'
+    ENABLE_OPENID_SIGNUP: 'false'
+    DISABLE_REGISTRATION: 'true'
+    ROOT_URL: http://localhost:3000
+    GITEA_BASE_URL: http://gitea:3000
+    GITEA_USERNAME: user1
+    GITEA_PASSWORD: 0penSesme3234
+    GITEA_EMAIL: test@example.com
   script:
-    - apt-get install -y postgresql-client libpq-dev
+    - apt-get install -y postgresql-client libpq-dev curl
     - packages/api/scripts/install-go-binaries-linux-amd64.sh
     - export PATH=$(pwd)/packages/api/bin:$PATH
     - yarn install
@@ -44,4 +68,13 @@ app-e2e:
     - yarn api:migrate
     - mv $PRIVATE_JWK_KEY_FILE packages/api/config/jwk/PrivateKeySet.json
     - mv $PUBLIC_JWK_KEY_FILE packages/api/config/jwk/PublicKeySet.json
+    - 'export GITEA_OAUTH_APP=$(yarn -s test:oauth-server-create-app)'
+    - 'export GITEA_CLIENT_ID=$(echo $GITEA_OAUTH_APP | gojq -r .client_id)'
+    - 'echo GITEA_CLIENT_ID=$GITEA_CLIENT_ID'
+    - 'export GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP | gojq -r .client_secret)'
     - yarn test:integration
+  artifacts:
+    paths:
+      - screenshot.png
+    expire_in: 1 week
+    when: always

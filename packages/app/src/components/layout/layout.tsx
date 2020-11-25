@@ -1,11 +1,10 @@
-import { useContext, useEffect, FunctionComponent, useState } from 'react';
+import { useContext, useEffect, FunctionComponent } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { AppBar, Toolbar, Link, Avatar, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import teal from '@material-ui/core/colors/teal';
 import UserContext from "../../user-context";
-import User from '../../models/user';
+import UserMenu from './user-menu';
 import SignupDialog from '../dialogs/signup-dialog';
 
 const useStyles = makeStyles((theme) => ({
@@ -22,30 +21,10 @@ const useStyles = makeStyles((theme) => ({
   gap: {
     flexGrow: 1,
   },
-  avatarButton: {
-    minWidth: 0,
-    '&:hover': {
-      backgroundColor: theme.palette.background.default,
-    }
-  },
-  avatar: {
-    height: 32,
-    width: 32,
-    fontSize: '18px',
-    backgroundColor: teal[600],
-    '&:hover': {
-      backgroundColor: teal[700],
-    }
-  }
 }));
 
-interface MainAppBarProps {
-  initials: string;
-}
-
-const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
+const MainAppBar: FunctionComponent = ({}) => {
   const classes = useStyles();
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
   return (
     <AppBar
         position="static"
@@ -65,32 +44,25 @@ const MainAppBar: FunctionComponent<MainAppBarProps> = ({initials}) => {
           </Link>
         </NextLink>
         <div className={classes.gap}></div>
-        <Button
-          className={classes.avatarButton}
-          disableRipple onClick={() => false}
-        >
-          <Avatar className={classes.avatar}>{initials}</Avatar>
-        </Button>
+        <UserMenu />
       </Toolbar>
     </AppBar>
   )
 }
 
 const Layout: FunctionComponent = ({children}) => {
-  const { state: { loggedIn }, client } = useContext(UserContext)!;
-  const [user, setUser] = useState<User|undefined>(undefined);
+  const { state: { loggedIn, user }, dispatch, client } = useContext(UserContext)!;
   const router = useRouter();
 
   const loadUser = async () => {
     const resp = await client.fetch('/sessions/current');
     if (resp.ok && resp.body.user) {
-      setUser(resp.body.user);
+      dispatch({type: 'userLoaded', user: resp.body.user});
     }
   }
 
   const logout = () => {
     client.logout();
-    setUser(undefined);
     router.replace('/login');
   }
 
@@ -99,18 +71,13 @@ const Layout: FunctionComponent = ({children}) => {
       loadUser();
     } else {
       client.logout();
-      setUser(undefined);
+      dispatch({type: 'loggedOut'});
       router.replace('/login');
     }
   }, [loggedIn]);
 
-  const initials = (
-    (user?.firstName && user?.lastName) ?
-    [user.firstName, user.lastName].map(s => s.substr(0, 1).toLocaleUpperCase()).join('') : 'YN'
-  )
-
   return <>
-    { loggedIn && <MainAppBar initials={initials} /> }
+    <MainAppBar />
     { loggedIn && (user?.active === false) && <SignupDialog user={user} onComplete={loadUser} onCancel={logout} /> }
     {children}
   </>
