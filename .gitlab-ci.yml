@@ -68,7 +68,7 @@ app-e2e:
     - yarn api:migrate
     - mv $PRIVATE_JWK_KEY_FILE packages/api/config/jwk/PrivateKeySet.json
     - mv $PUBLIC_JWK_KEY_FILE packages/api/config/jwk/PublicKeySet.json
-    - 'export GITEA_OAUTH_APP=$(curl -X POST $GITEA_BASE_URL/api/v1/user/applications/oauth2 -H  "accept: application/json" -H  "authorization: Basic dXNlcjE6MHBlblNlc21lMzIzNA==" -H  "Content-Type: application/json" -d "{  \"name\": \"MyApp\",  \"redirect_uris\": [    \"http://localhost:3002/auth/gitea\"  ]}")'
+    - 'export GITEA_OAUTH_APP=$(curl -X POST $GITEA_BASE_URL/api/v1/user/applications/oauth2 -H  "accept: application/json" -H  "authorization: Basic dXNlcjE6MHBlblNlc21lMzIzNA==" -H  "Content-Type: application/json" -d "{  \"name\": \"MyApp\",  \"redirect_uris\": [    \"http://localhost:3002/auth/gitea/callback\"  ]}")'
     - 'export GITEA_CLIENT_ID=$(echo $GITEA_OAUTH_APP | gojq -r .client_id)'
     - 'echo GITEA_CLIENT_ID=$GITEA_CLIENT_ID'
     - 'export GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP | gojq -r .client_secret)'
