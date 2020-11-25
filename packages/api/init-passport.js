@@ -13,20 +13,15 @@ const strategies = {
 	gitlab: GitLabStrategy
 };
 
-function p(value) {
-	console.log(value);
-	return value
-}
-
 function giteaParams({name, authorizationUrl, tokenUrl, userProfileUrl}) {
 	if (process.env[`${name.toUpperCase()}_BASE_URL`]) {
 		const baseUrl = process.env[`${name.toUpperCase()}_BASE_URL`];
-		return p({
+		return {
 			name,
 			authorizationURL: `${baseUrl}/login/oauth/authorize`,
       tokenURL: `${baseUrl}/login/oauth/access_token`,
       userProfileURL: `${baseUrl}/api/v1/user`,
-		});
+		};
 	} else {
 		return {name, authorizationUrl, tokenUrl, userProfileUrl};
 	}

@@ -74,6 +74,7 @@ app-e2e:
     - mv $PUBLIC_JWK_KEY_FILE packages/api/config/jwk/PublicKeySet.json
     - 'export GITEA_OAUTH_APP=$(curl -X POST "http://gitea:3000/api/v1/user/applications/oauth2" -H  "accept: application/json" -H  "authorization: Basic dXNlcjE6MHBlblNlc21lMzIzNA==" -H  "Content-Type: application/json" -d "{  \"name\": \"MyApp\",  \"redirect_uris\": [    \"http://localhost:3000/auth/gitea\"  ]}")'
     - 'export GITEA_CLIENT_ID=$(echo $GITEA_OAUTH_APP | gojq -r .client_id)'
+    - 'echo GITEA_CLIENT_ID=$GITEA_CLIENT_ID'
     - 'export GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP | gojq -r .client_secret)'
     - yarn test:integration
   artifacts:
