@@ -30,7 +30,7 @@ app-e2e:
   image: mcr.microsoft.com/playwright:bionic
   services:
     - postgres
-    - name: $CI_REGISTRY/resourcesco/app/gitea-test
+    - name: $CI_REGISTRY/resourcesco/app/gitea-test:latest
       alias: gitea
   artifacts:
     paths:
