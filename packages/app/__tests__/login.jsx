@@ -5,9 +5,14 @@ describe('GitHub', () => {
     await page.fill('[name=user_name]', process.env.GITEA_USERNAME);
     await page.fill('[name=password]', process.env.GITEA_PASSWORD);
     await page.click('button.green');
-    await page.waitForTimeout(1000);
     const matchedSel = await Promise.race(['"Authorize Application"', '"Sign Up"'].map(async sel => {
-      await page.waitForSelector(sel);
+      try {
+        await page.waitForSelector(sel);
+      } catch (err) {
+        await page.screenshot({path: '../../screenshot.png'});
+        throw err;
+      }
+      await page.screenshot({path: '../../screenshot.png'});
       return sel;
     }));
     if (matchedSel === '"Authorize Application"') {
