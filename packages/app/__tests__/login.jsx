@@ -5,14 +5,15 @@ describe('GitHub', () => {
     await page.fill('[name=user_name]', process.env.GITEA_USERNAME);
     await page.fill('[name=password]', process.env.GITEA_PASSWORD);
     await page.click('button.green');
+    await page.waitForTimeout(1000);
     const matchedSel = await Promise.race(['"Authorize Application"', '"Sign Up"'].map(async sel => {
       await page.waitForSelector(sel);
       return sel;
     }));
     if (matchedSel === '"Authorize Application"') {
       await page.click('"Authorize Application"');
+      await page.waitForSelector('"Sign Up"');
     }
-    await page.waitForSelector('"Sign Up"');
     await expect(page).toHaveText('Sign Up');
     await page.fill('#email', process.env.GITEA_EMAIL);
     await page.fill('#first_name', 'DJ');
