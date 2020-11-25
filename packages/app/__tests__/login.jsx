@@ -14,5 +14,13 @@ describe('GitHub', () => {
     }
     await page.waitForSelector('"Sign Up"');
     await expect(page).toHaveText('Sign Up');
+    await page.fill('#email', process.env.GITEA_EMAIL);
+    await page.fill('#first_name', 'DJ');
+    await page.fill('#last_name', 'Test');
+    await page.check('#accepted_terms');
+    await page.focus('#first_name');
+    await page.click('button[type=submit]');
+    await page.waitForSelector('"DT"');
+    await expect(page).toHaveText('DT');
   });
 });

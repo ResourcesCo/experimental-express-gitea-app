@@ -44,7 +44,7 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user: initialUser, onComp
         <SignupForm user={user} error={error} onChange={user => setUser(user)} />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSignUp} color="primary" disabled={!valid}>
+        <Button type="submit" onClick={handleSignUp} color="primary" disabled={!valid}>
           Sign Up
         </Button>
       </DialogActions>
