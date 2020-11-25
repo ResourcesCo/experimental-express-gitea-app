@@ -2,6 +2,6 @@ module.exports = {
   // browsers: ["chromium", "firefox", "webkit"],
   browsers: ["chromium"],
   launchOptions: {
-    headless: false
+    headless: process.env.HEADLESS !== 'false'
   }
 }
