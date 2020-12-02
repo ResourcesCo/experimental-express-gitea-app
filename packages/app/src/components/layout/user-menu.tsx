@@ -68,7 +68,15 @@ const UserMenu: FunctionComponent = ({}) => {
         }}
         elevation={2}
       >
-        { loggedIn && <Link onClick={logout}>Log Out</Link> }
+        <div>
+          { user?.firstName } { user?.lastName }
+        </div>
+        <div>
+          { user?.email }
+        </div>
+        <div>
+          { loggedIn && <Link onClick={logout}>Log Out</Link> }
+        </div>
       </Popover>
     </>
   )
