@@ -70,10 +70,10 @@ app-e2e:
     - yarn api:migrate
     - mv $PRIVATE_JWK_KEY_FILE packages/api/config/jwk/PrivateKeySet.json
     - mv $PUBLIC_JWK_KEY_FILE packages/api/config/jwk/PublicKeySet.json
-    - 'export GITEA_OAUTH_APP=$(yarn -s test:oauth-server-create-app)'
-    - 'export OAUTH_GITEA_CLIENT_ID=$(echo $GITEA_OAUTH_APP | gojq -r .client_id)'
-    - 'echo OAUTH_GITEA_CLIENT_ID=$GITEA_CLIENT_ID'
-    - 'export OAUTH_GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP | gojq -r .client_secret)'
+    - 'GITEA_OAUTH_APP_JSON=$(yarn -s test:oauth-server-create-app)'
+    - 'export OAUTH_GITEA_CLIENT_ID=$(echo $GITEA_OAUTH_APP_JSON | gojq -r .client_id)'
+    - 'export OAUTH_GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP_JSON | gojq -r .client_secret)'
+    - 'echo OAUTH_GITEA_CLIENT_ID=$OAUTH_GITEA_CLIENT_ID'
     - yarn test:integration
   artifacts:
     paths:
