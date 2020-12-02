@@ -54,7 +54,9 @@ app-e2e:
     ENABLE_OPENID_SIGNUP: 'false'
     DISABLE_REGISTRATION: 'true'
     ROOT_URL: http://localhost:3000
-    GITEA_BASE_URL: http://gitea:3000
+    OAUTH_PROVIDERS: gitea
+    NEXT_PUBLIC_OAUTH_PROVIDERS: gitea
+    OAUTH_GITEA_BASE_URL: http://gitea:3000
     GITEA_USERNAME: user1
     GITEA_PASSWORD: 0penSesme3234
     GITEA_EMAIL: test@example.com
@@ -68,10 +70,10 @@ app-e2e:
     - yarn api:migrate
     - mv $PRIVATE_JWK_KEY_FILE packages/api/config/jwk/PrivateKeySet.json
     - mv $PUBLIC_JWK_KEY_FILE packages/api/config/jwk/PublicKeySet.json
-    - 'export GITEA_OAUTH_APP=$(yarn -s test:oauth-server-create-app)'
-    - 'export GITEA_CLIENT_ID=$(echo $GITEA_OAUTH_APP | gojq -r .client_id)'
-    - 'echo GITEA_CLIENT_ID=$GITEA_CLIENT_ID'
-    - 'export GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP | gojq -r .client_secret)'
+    - 'GITEA_OAUTH_APP_JSON=$(yarn -s test:oauth-server-create-app)'
+    - 'export OAUTH_GITEA_CLIENT_ID=$(echo $GITEA_OAUTH_APP_JSON | gojq -r .client_id)'
+    - 'export OAUTH_GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP_JSON | gojq -r .client_secret)'
+    - 'echo OAUTH_GITEA_CLIENT_ID=$OAUTH_GITEA_CLIENT_ID'
     - yarn test:integration
   artifacts:
     paths:

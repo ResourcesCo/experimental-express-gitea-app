@@ -7,6 +7,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { titleCase } from 'title-case';
 import UserContext from '../src/user-context';
 import { AUTH_STATES_STORAGE_KEY } from '../src/constants';
 
@@ -18,6 +19,15 @@ function randomChars(length: number) {
   const arr = new Uint8Array(length);
   window.crypto.getRandomValues(arr);
   return Array.from(arr).map(n => chars[n % chars.length]).join('');
+}
+
+function formatProviderName(providerName: string): string {
+  const specialCases: {[key: string]: string} = {
+    Github: 'GitHub',
+    Gitlab: 'GitLab'
+  }
+  const result = titleCase(providerName);
+  return specialCases[result] || result
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -77,6 +87,10 @@ export default function SignIn() {
     })();
   }, [router.query]);
 
+  const oauthProviders = (
+    process.env.NEXT_PUBLIC_OAUTH_PROVIDERS || ''
+  ).split(',').map(s => s.trim()).filter(s => s.length > 0)
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -88,33 +102,18 @@ export default function SignIn() {
           Sign in
         </Typography>
         <form className={classes.form} noValidate>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={() => redirectToSignIn("github")}
-          >
-            Sign In with GitHub
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={() => redirectToSignIn("gitlab")}
-          >
-            Sign In with GitLab
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={() => redirectToSignIn("gitea")}
-          >
-            Sign In with Gitea
-          </Button>
+          {oauthProviders.map(providerName => (
+            <Button
+              key={providerName}
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={() => redirectToSignIn(providerName)}
+            >
+              Sign In with {formatProviderName(providerName)}
+            </Button>
+          ))}
         </form>
       </div>
     </Container>
