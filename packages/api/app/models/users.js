@@ -2,6 +2,20 @@ const {v4: uuidv4} = require('uuid');
 const {randomBytes} = require('crypto');
 
 module.exports = function users(db) {
+	function formatUser(row) {
+		return {
+			id: row.id,
+			email: row.email,
+			active: row.active,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
+			firstName: row.first_name,
+			lastName: row.last_name,
+			signedUpAt: row.signed_up_at,
+			acceptedTermsAt: row.accepted_terms_at
+		}
+	}
+
 	return {
 		async findOrCreateUser({provider, providerUserId, email, accessToken, refreshToken}) {
 			const selectOauthSessionResult = await db.query(
@@ -73,17 +87,16 @@ module.exports = function users(db) {
 			const result = await db.query('select * from users where id = $1', [id]);
 			if (result.rows.length === 1) {
 				const row = result.rows[0];
-				return {
-					id: row.id,
-					email: row.email,
-					active: row.active,
-					createdAt: row.created_at,
-					updatedAt: row.updated_at,
-					firstName: row.first_name,
-					lastName: row.last_name,
-					signedUpAt: row.signed_up_at,
-					acceptedTermsAt: row.accepted_terms_at
-				}
+				return formatUser(row);
+			} else {
+				throw new Error('Error getting user profile');
+			}
+		},
+		async getUserByEmail(email) {
+			const result = await db.query('select * from users where email = $1', [email]);
+			if (result.rows.length === 1) {
+				const row = result.rows[0];
+				return formatUser(row);
 			} else {
 				throw new Error('Error getting user profile');
 			}
@@ -130,6 +143,16 @@ module.exports = function users(db) {
 			} else {
 				throw new Error('At least one field must be given to update user');
 			}
+		},
+		async getOauthSession({userId, provider}) {
+			const result = await db.query(
+				'select * from oauth_sessions where user_id = $1 and provider = $2',
+				[userId, provider]
+			);
+			if (result.rowCount !== 1) {
+				throw new Error('Error getting OAuth session', userId, provider);
+			}
+			return result.rows[0];
 		}
 	}
 }

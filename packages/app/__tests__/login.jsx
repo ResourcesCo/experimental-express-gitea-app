@@ -2,8 +2,8 @@ describe('GitHub', () => {
   it('should show the login page', async () => {
     await page.goto('http://localhost:3000/login');
     await page.click('"Sign In with Gitea"');
-    await page.fill('[name=user_name]', process.env.GITEA_USERNAME);
-    await page.fill('[name=password]', process.env.GITEA_PASSWORD);
+    await page.fill('[name=user_name]', process.env.GITEA_ADMIN_USERNAME);
+    await page.fill('[name=password]', process.env.GITEA_ADMIN_PASSWORD);
     await page.click('button.green');
     const matchedSel = await Promise.race(['"Authorize Application"', '"Sign Up"'].map(async sel => {
       try {

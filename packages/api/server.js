@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const initPassport = require('./init-passport');
 const {Pool} = require('pg');
+const gitea = require('./app/services/gitea');
 const initUsers = require('./app/models/users');
 const tokens = require('./app/models/tokens');
 const {sessionLoader, authenticate} = require('./app/controllers/auth');
@@ -15,7 +16,8 @@ const db = new Pool({
 	connectionString: process.env.NODE_DATABASE_URL
 });
 
-const users = initUsers(db);
+const users = initUsers({db, gitea});
+gitea.configureAuth(users);
 
 const app = express();
 

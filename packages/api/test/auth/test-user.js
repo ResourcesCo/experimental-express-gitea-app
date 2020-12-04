@@ -52,3 +52,22 @@ test.serial('sign up user', async t => {
 	t.is(result3.lastName, 'Test');
 	t.truthy(result3.acceptedTermsAt);
 });
+
+test.serial('sign up user and create gitea user', async t => {
+	const result1 = await users.findOrCreateUser({
+		provider: 'gitea',
+		providerUserId: '1500',
+		email: process.env.GITEA_ADMIN_EMAIL,
+		accessToken: 'abf3343112',
+		refreshToken: 'abf2332343242'
+	});
+	const result2 = await users.updateUser(result1.id, {
+		active: true,
+		firstName: 'J',
+		lastName: 'Test',
+		signedUpAt: new Date(),
+		acceptedTermsAt: new Date(),
+	});
+	const user = await users.getUser(result1.id);
+	const result3 = await users.createGiteaUser(user);
+})

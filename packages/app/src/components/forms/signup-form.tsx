@@ -18,6 +18,15 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
       </DialogContentText>
       <TextField
         margin="dense"
+        id="username"
+        label="Username"
+        value={user.username}
+        onChange={({target: {value}}) => onChange({...user, username: value})}
+        required
+        fullWidth
+      />
+      <TextField
+        margin="dense"
         id="email"
         label="Email Address"
         type="email"
