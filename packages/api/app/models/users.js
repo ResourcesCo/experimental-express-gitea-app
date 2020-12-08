@@ -1,11 +1,12 @@
 const {v4: uuidv4} = require('uuid');
 const {randomBytes} = require('crypto');
 
-module.exports = function users(db) {
+module.exports = function users({db}) {
 	function formatUser(row) {
 		return {
 			id: row.id,
 			email: row.email,
+			username: row.username,
 			active: row.active,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
@@ -17,7 +18,7 @@ module.exports = function users(db) {
 	}
 
 	return {
-		async findOrCreateUser({provider, providerUserId, email, accessToken, refreshToken}) {
+		async findOrCreateUser({provider, providerUserId, providerUsername, email, username, accessToken, refreshToken}) {
 			const selectOauthSessionResult = await db.query(
 				'select * from oauth_sessions where provider = $1 and provider_user_id = $2',
 				[provider, providerUserId.toString()]
@@ -26,19 +27,19 @@ module.exports = function users(db) {
 			if (selectOauthSessionResult.rows.length > 0) {
 				userId = selectOauthSessionResult.rows[0].user_id;
 				await db.query(
-					'update oauth_sessions set access_token = $1, refresh_token = $2, updated_at = $3 where id = $4',
-					[accessToken, refreshToken, new Date(), selectOauthSessionResult.rows[0].id]
+					'update oauth_sessions set access_token = $1, refresh_token = $2, updated_at = $3, provider_username where id = $4',
+					[accessToken, refreshToken, new Date(), providerUsername, selectOauthSessionResult.rows[0].id]
 				);
 			} else {
 				userId = uuidv4();
-				await db.query('insert into users (id, email, active, created_at, updated_at) values ($1, $2, $3, $4, $5)', [
-					userId, email, false, new Date(), new Date()
+				await db.query('insert into users (id, email, username, active, created_at, updated_at) values ($1, $2, $3, $4, $5, $6)', [
+					userId, email, username, false, new Date(), new Date()
 				]);
 				await db.query(
 					`insert into oauth_sessions
-					(id, user_id, provider, provider_user_id, access_token, refresh_token, created_at, updated_at)
-					values ($1, $2, $3, $4, $5, $6, $7, $8)`,
-					[uuidv4(), userId, provider, providerUserId, accessToken, refreshToken, new Date(), new Date()]
+					(id, user_id, provider, provider_user_id, provider_username, access_token, refresh_token, created_at, updated_at)
+					values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+					[uuidv4(), userId, provider, providerUserId, providerUsername, accessToken, refreshToken, new Date(), new Date()]
 				);
 			}
 		
@@ -101,7 +102,16 @@ module.exports = function users(db) {
 				throw new Error('Error getting user profile');
 			}
 		},
-		async updateUser(id, {email, active, firstName, lastName, signedUpAt, acceptedTermsAt}) {
+		async getUserByUsername(username) {
+			const result = await db.query('select * from users where username = $1', [username]);
+			if (result.rows.length === 1) {
+				const row = result.rows[0];
+				return formatUser(row);
+			} else {
+				throw new Error('Error getting user profile');
+			}
+		},
+		async updateUser(id, {email, username, active, firstName, lastName, signedUpAt, acceptedTermsAt}) {
 			if (!id) {
 				throw new Error('An ID is required to update a user record');
 			}
@@ -110,6 +120,10 @@ module.exports = function users(db) {
 			if (email) {
 				params.push(email);
 				sqlParams.push(`email = $${params.length}`);
+			}
+			if (username) {
+				params.push(username);
+				sqlParams.push(`username = $${params.length}`);
 			}
 			if (active) {
 				params.push(active);

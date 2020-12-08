@@ -1,5 +1,19 @@
+const gitea = require('../services/gitea');
+
 module.exports = function initUserRoutes({app, authenticate, users}) {
-  function getUser(req, res) {
+  async function updateUser(userId, user) {
+    await users.updateUser(userId, user);
+    const resp = await gitea.createUser({
+      username: user.username,
+      email: user.email,
+    });
+    console.log('gitea create user response', resp);
+    if (!resp.ok) {
+      throw new Error('Error creating gitea user');
+    }
+  }
+
+  function handleGetUser(req, res) {
     const { userId } = req.session;
     users.getUser(userId).then(user => {
       res.send({user});
@@ -10,14 +24,14 @@ module.exports = function initUserRoutes({app, authenticate, users}) {
     });
   }
 
-  function updateUser(req, res) {
+  function handleUpdateUser(req, res) {
     const { userId } = req.session;
     const user = req.body;
     if (user.id && user.id !== userId) {
       res.status(422).send({error: 'ID must match current user ID'});
       return;
     }
-    users.updateUser(userId, user).then(() => {
+    updateUser(userId, user).then(() => {
       res.send({});
     }).catch(err => {
       const error = 'Error updating current user.';
@@ -26,6 +40,6 @@ module.exports = function initUserRoutes({app, authenticate, users}) {
     });
   }
 
-  app.get('/users/current', authenticate(), getUser);
-  app.patch('/users/current', authenticate(), updateUser);
+  app.get('/users/current', authenticate(), handleGetUser);
+  app.patch('/users/current', authenticate(), handleUpdateUser);
 };

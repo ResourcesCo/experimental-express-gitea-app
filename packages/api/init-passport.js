@@ -84,11 +84,14 @@ function addRoutes(app, users, {name}) {
 			const {accessToken, refreshToken, profile} = user;
 			const hasEmail = Array.isArray(profile.emails) && profile.emails.length >= 1;
 			const email = hasEmail ? profile.emails[0].value : null;
+			const username = profile.username ? profile.username : null;
 			users
 				.findOrCreateUser({
 					provider: name,
 					providerUserId: profile.id,
+					providerUsername: username || email,
 					email,
+					username,
 					accessToken,
 					refreshToken
 				})

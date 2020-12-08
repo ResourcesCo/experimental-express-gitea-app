@@ -1,6 +1,7 @@
 const test = require('ava');
 const {Pool} = require('pg');
 const initUsers = require('../../app/models/users');
+const gitea = require('../../app/services/gitea');
 
 let db;
 let users;
@@ -9,7 +10,7 @@ test.before(() => {
 	db = new Pool({
 		connectionString: process.env.NODE_TEST_DATABASE_URL
 	});
-	users = initUsers(db);
+	users = initUsers({db});
 });
 
 test.afterEach(async () => {
@@ -44,10 +45,12 @@ test.serial('sign up user', async t => {
 		active: true,
 		firstName: 'J',
 		lastName: 'Test',
+		username: 'jtest',
 		signedUpAt: new Date(),
 		acceptedTermsAt: new Date(),
 	});
 	const result3 = await users.getUser(result1.id);
+	t.is(result3.username, 'jtest');
 	t.is(result3.firstName, 'J');
 	t.is(result3.lastName, 'Test');
 	t.truthy(result3.acceptedTermsAt);
@@ -70,4 +73,5 @@ test.serial('sign up user and create gitea user', async t => {
 	});
 	const user = await users.getUser(result1.id);
 	const result3 = await users.createGiteaUser(user);
-})
+	console.log(result3);
+});
