@@ -14,6 +14,13 @@ test.before(() => {
 	db = new Pool({
 		connectionString: process.env.NODE_TEST_DATABASE_URL,
 	});
+});
+
+test.after(async () => {
+	await db.end();
+});
+
+test.beforeEach(async () => {
 	users = initUsers({db});
 	usersController = initUsersController({users, gitea});
 	sandbox = sinon.createSandbox();
@@ -23,10 +30,6 @@ test.afterEach(async () => {
 	await db.query('delete from users');
 	await db.query('delete from oauth_sessions');
 	sandbox.restore();
-});
-
-test.after(async () => {
-	await db.end();
 });
 
 test.serial('create user', async t => {
