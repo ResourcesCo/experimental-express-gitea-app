@@ -66,7 +66,7 @@ async function createUser({username}) {
     user,
     token: {
       ...token,
-      token: token.token,
+      token: token.sha1,
     },
   };
 }
