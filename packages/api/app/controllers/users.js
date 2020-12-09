@@ -1,6 +1,4 @@
-const gitea = require('../services/gitea');
-
-module.exports = function initUserRoutes({app, authenticate, users}) {
+module.exports = function initUserController({users, gitea}) {
   async function updateUser(userId, user) {
     const resp = await gitea.createUser({
       username: user.username,
@@ -9,7 +7,7 @@ module.exports = function initUserRoutes({app, authenticate, users}) {
     user.giteaToken = resp.token.token;
     await users.updateUser(userId, user);
     if (!resp.ok) {
-      throw new Error('Error creating gitea user');
+      throw new Error('Error creating gitea user: ' + JSON.stringify(resp));
     }
   }
 
@@ -40,6 +38,11 @@ module.exports = function initUserRoutes({app, authenticate, users}) {
     });
   }
 
-  app.get('/users/current', authenticate(), handleGetUser);
-  app.patch('/users/current', authenticate(), handleUpdateUser);
+  return {
+    updateUser,
+    initRoutes({app, authenticate}) {
+      app.get('/users/current', authenticate(), handleGetUser);
+      app.patch('/users/current', authenticate(), handleUpdateUser);
+    },
+  }
 };

@@ -1,4 +1,10 @@
 module.exports = function initSessionRoutes({app, authenticate, users, tokens}) {
+  async function currentSession({userId}) {
+    const user = await users.getUser(userId);
+    const projects = [];
+    return {user, projects};
+  }
+
   function loginHandler(req, res) {
     let userId;
     users
@@ -22,8 +28,8 @@ module.exports = function initSessionRoutes({app, authenticate, users, tokens}) 
 
   function currentSessionHandler(req, res) {
     const { userId } = req.session;
-    users.getUser(userId).then(user => {
-      res.send({user});
+    currentSession({userId}).then(({user, projects}) => {
+      res.send({user, projects});
     }).catch(err => {
       res.status(500).send({error: 'Error getting current session.'});
     });

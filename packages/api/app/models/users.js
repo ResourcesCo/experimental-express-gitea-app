@@ -28,7 +28,7 @@ module.exports = function users({db}) {
 			if (selectOauthSessionResult.rows.length > 0) {
 				userId = selectOauthSessionResult.rows[0].user_id;
 				await db.query(
-					'update oauth_sessions set access_token = $1, refresh_token = $2, updated_at = $3, provider_username where id = $4',
+					'update oauth_sessions set access_token = $1, refresh_token = $2, updated_at = $3, provider_username = $4 where id = $5',
 					[accessToken, refreshToken, new Date(), providerUsername, selectOauthSessionResult.rows[0].id]
 				);
 			} else {

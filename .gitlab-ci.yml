@@ -75,8 +75,8 @@ app-e2e:
     - 'export OAUTH_GITEA_CLIENT_SECRET=$(echo $GITEA_OAUTH_APP_JSON | gojq -r .client_secret)'
     - 'echo OAUTH_GITEA_CLIENT_ID=$OAUTH_GITEA_CLIENT_ID'
     - yarn test:integration
-  artifacts:
-    paths:
-      - screenshot.png
-    expire_in: 1 week
-    when: always
+  # artifacts:
+  #   paths:
+  #     - screenshot.png
+  #   expire_in: 1 week
+  #   when: always

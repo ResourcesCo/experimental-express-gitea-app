@@ -1,21 +1,28 @@
 const test = require('ava');
 const {Pool} = require('pg');
+const sinon = require('sinon');
 const initUsers = require('../../app/models/users');
+const initUsersController = require('../../app/controllers/users');
 const gitea = require('../../app/services/gitea');
 
 let db;
 let users;
+let usersController;
+let sandbox;
 
 test.before(() => {
 	db = new Pool({
-		connectionString: process.env.NODE_TEST_DATABASE_URL
+		connectionString: process.env.NODE_TEST_DATABASE_URL,
 	});
 	users = initUsers({db});
+	usersController = initUsersController({users, gitea});
+	sandbox = sinon.createSandbox();
 });
 
 test.afterEach(async () => {
 	await db.query('delete from users');
 	await db.query('delete from oauth_sessions');
+	sandbox.restore();
 });
 
 test.after(async () => {
@@ -28,20 +35,33 @@ test.serial('create user', async t => {
 		providerUserId: '1341',
 		email: 'x@example.com',
 		accessToken: 'abf3343112',
-		refreshToken: 'abf2332343242'
+		refreshToken: 'abf2332343242',
 	});
 	t.true(typeof result.id === 'string');
 });
 
-test.serial('sign up user', async t => {
+test.serial('sign up user and create gitea user', async t => {
 	const result1 = await users.findOrCreateUser({
 		provider: 'github',
 		providerUserId: '1500',
 		email: 'x@example.com',
 		accessToken: 'abf3343112',
-		refreshToken: 'abf2332343242'
+		refreshToken: 'abf2332343242',
 	});
-	const result2 = await users.updateUser(result1.id, {
+	sandbox.stub(gitea, 'createUser').callsFake(async ({username}) => {
+		return {
+			ok: true,
+			user: {
+				login: username,
+				username,
+			},
+			token: {
+				sha1: '835260928dd1378c2bbfa11193e9adb911f74407',
+				token: '835260928dd1378c2bbfa11193e9adb911f74407',
+			},
+		};
+	});
+	const result2 = await usersController.updateUser(result1.id, {
 		active: true,
 		firstName: 'J',
 		lastName: 'Test',
@@ -54,24 +74,4 @@ test.serial('sign up user', async t => {
 	t.is(result3.firstName, 'J');
 	t.is(result3.lastName, 'Test');
 	t.truthy(result3.acceptedTermsAt);
-});
-
-test.serial('sign up user and create gitea user', async t => {
-	const result1 = await users.findOrCreateUser({
-		provider: 'gitea',
-		providerUserId: '1500',
-		email: process.env.GITEA_ADMIN_EMAIL,
-		accessToken: 'abf3343112',
-		refreshToken: 'abf2332343242'
-	});
-	const result2 = await users.updateUser(result1.id, {
-		active: true,
-		firstName: 'J',
-		lastName: 'Test',
-		signedUpAt: new Date(),
-		acceptedTermsAt: new Date(),
-	});
-	const user = await users.getUser(result1.id);
-	const result3 = await users.createGiteaUser(user);
-	console.log(result3);
 });

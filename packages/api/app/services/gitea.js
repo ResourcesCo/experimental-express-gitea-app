@@ -42,11 +42,10 @@ async function createUser({username}) {
       must_change_password: false,
     }),
   });
-  if (!resp.ok) {
-    throw new Error('Error creating gitea user');
-  }
   const user = await resp.json();
-  console.log({Authorization: basicAuth(username, password)});
+  if (!resp.ok) {
+    throw new Error('Error creating gitea user: ' + JSON.stringify(user));
+  }
   const tokenResp = await fetch(`${baseUrl}/api/v1/users/${username}/tokens`, {
     method: 'POST',
     headers: {

@@ -9,10 +9,10 @@ describe('GitHub', () => {
       try {
         await page.waitForSelector(sel);
       } catch (err) {
-        await page.screenshot({path: '../../screenshot.png'});
+        // await page.screenshot({path: '../../screenshot.png'});
         throw err;
       }
-      await page.screenshot({path: '../../screenshot.png'});
+      // await page.screenshot({path: '../../screenshot.png'});
       return sel;
     }));
     if (matchedSel === '"Authorize Application"') {
@@ -20,9 +20,10 @@ describe('GitHub', () => {
       await page.waitForSelector('"Sign Up"');
     }
     await expect(page).toHaveText('Sign Up');
-    await page.fill('#email', process.env.GITEA_EMAIL);
+    await page.fill('#email', 'djtest@example.com');
     await page.fill('#first_name', 'DJ');
     await page.fill('#last_name', 'Test');
+    await page.fill('#username', 'djtest');
     await page.check('#accepted_terms');
     await page.focus('#first_name');
     await page.click('button[type=submit]');
