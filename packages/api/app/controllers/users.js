@@ -2,12 +2,12 @@ const gitea = require('../services/gitea');
 
 module.exports = function initUserRoutes({app, authenticate, users}) {
   async function updateUser(userId, user) {
-    await users.updateUser(userId, user);
     const resp = await gitea.createUser({
       username: user.username,
       email: user.email,
     });
-    console.log('gitea create user response', resp);
+    user.giteaToken = resp.token.token;
+    await users.updateUser(userId, user);
     if (!resp.ok) {
       throw new Error('Error creating gitea user');
     }

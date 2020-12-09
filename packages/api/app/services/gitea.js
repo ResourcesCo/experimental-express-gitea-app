@@ -5,27 +5,69 @@ let users;
 
 const baseUrl = process.env.GITEA_BACKEND_BASE_URL;
 const token = process.env.GITEA_BACKEND_ADMIN_TOKEN;
-const prefix = process.env.GITEA_BACKEND_PREFIX;
+
+const getHeaders = {
+  Accept: 'application/json',
+};
+
+const headers = {
+  ...getHeaders,
+  'Content-Type': 'application/json',
+};
+
+const adminGetHeaders = {
+  ...getHeaders,
+  Authorization: `token ${token}`,
+};
+
+const adminHeaders = {
+  ...headers,
+  Authorization: `token ${token}`,
+};
+
+function basicAuth(username, password) {
+  return 'Basic ' + Buffer.from(username + ':' + password).toString('base64');
+}
 
 async function createUser({username}) {
   const password = randomBytes(24).toString('base64');
-  const email = prefix + randomBytes(24).toString('hex') + '@example.com';
+  const email = 'rco_' + randomBytes(24).toString('hex') + '@example.com';
   const resp = await fetch(`${baseUrl}/api/v1/admin/users`, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers: adminHeaders,
     body: JSON.stringify({
-      username: `${prefix}${username}`,
+      username,
       email,
       password,
+      must_change_password: false,
     }),
   });
+  if (!resp.ok) {
+    throw new Error('Error creating gitea user');
+  }
+  const user = await resp.json();
+  console.log({Authorization: basicAuth(username, password)});
+  const tokenResp = await fetch(`${baseUrl}/api/v1/users/${username}/tokens`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      Authorization: basicAuth(username, password),
+    },
+    body: JSON.stringify({
+      name: 'Resources.co app',
+    }),
+  });
+  const token = await tokenResp.json();
+  if (!tokenResp.ok) {
+    throw new Error('Error creating gitea token: ' + tokenResp.status + ", " + JSON.stringify(token));
+  }
   return {
     ok: resp.ok,
-    body: await resp.json(),
+    user,
+    token: {
+      ...token,
+      token: token.token,
+    },
   };
 }
 

@@ -2,7 +2,7 @@ const {v4: uuidv4} = require('uuid');
 const {randomBytes} = require('crypto');
 
 module.exports = function users({db}) {
-	function formatUser(row) {
+	function formatUser(row, {includeCredentials} = {includeCredentials: false}) {
 		return {
 			id: row.id,
 			email: row.email,
@@ -13,8 +13,9 @@ module.exports = function users({db}) {
 			firstName: row.first_name,
 			lastName: row.last_name,
 			signedUpAt: row.signed_up_at,
-			acceptedTermsAt: row.accepted_terms_at
-		}
+			acceptedTermsAt: row.accepted_terms_at,
+			...(includeCredentials && {giteaToken: row.gitea_token}),
+		};
 	}
 
 	return {
@@ -84,11 +85,11 @@ module.exports = function users({db}) {
 				}
 			}
 		},
-		async getUser(id) {
+		async getUser(id, {includeCredentials} = {includeCredentials: false}) {
 			const result = await db.query('select * from users where id = $1', [id]);
 			if (result.rows.length === 1) {
 				const row = result.rows[0];
-				return formatUser(row);
+				return formatUser(row, {includeCredentials});
 			} else {
 				throw new Error('Error getting user profile');
 			}
@@ -111,39 +112,43 @@ module.exports = function users({db}) {
 				throw new Error('Error getting user profile');
 			}
 		},
-		async updateUser(id, {email, username, active, firstName, lastName, signedUpAt, acceptedTermsAt}) {
+		async updateUser(id, updates) {
 			if (!id) {
 				throw new Error('An ID is required to update a user record');
 			}
 			const sqlParams = [];
 			const params = [];
-			if (email) {
-				params.push(email);
+			if ('email' in updates) {
+				params.push(updates.email);
 				sqlParams.push(`email = $${params.length}`);
 			}
-			if (username) {
-				params.push(username);
+			if ('username' in updates) {
+				params.push(updates.username);
 				sqlParams.push(`username = $${params.length}`);
 			}
-			if (active) {
-				params.push(active);
+			if ('active' in updates) {
+				params.push(updates.active);
 				sqlParams.push(`active = $${params.length}`);
 			}
-			if (firstName) {
-				params.push(firstName);
+			if ('firstName' in updates) {
+				params.push(updates.firstName);
 				sqlParams.push(`first_name = $${params.length}`);
 			}
-			if (lastName) {
-				params.push(lastName);
+			if ('lastName' in updates) {
+				params.push(updates.lastName);
 				sqlParams.push(`last_name = $${params.length}`);
 			}
-			if (signedUpAt) {
-				params.push(signedUpAt);
+			if ('signedUpAt' in updates) {
+				params.push(updates.signedUpAt);
 				sqlParams.push(`signed_up_at = $${params.length}`);
 			}
-			if (acceptedTermsAt) {
-				params.push(acceptedTermsAt);
+			if ('acceptedTermsAt' in updates) {
+				params.push(updates.acceptedTermsAt);
 				sqlParams.push(`accepted_terms_at = $${params.length}`);
+			}
+			if ('giteaToken' in updates) {
+				params.push(updates.giteaToken);
+				sqlParams.push(`gitea_token = $${params.length}`);
 			}
 			if (params.length > 0) {
 				params.push(id);
