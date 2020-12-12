@@ -18,10 +18,12 @@
     "libauth",
     "mkdir",
     "prettierignore",
+    "rehype",
     "sandboxed",
     "transpiled",
     "typedoc",
-    "untracked"
+    "untracked",
+    "vfile"
   ],
   "flagWords": [],
   "ignorePaths": [

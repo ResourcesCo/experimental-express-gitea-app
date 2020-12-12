@@ -3,6 +3,6 @@
  *
  * @param input - the input
  */
-export const runList = (input: any) => {
+export const runList = (input: number) => {
   return { input };
 };
