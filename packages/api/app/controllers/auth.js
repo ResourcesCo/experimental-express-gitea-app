@@ -12,6 +12,7 @@ exports.sessionLoader = function sessionLoader({users, tokens}) {
           req.session = { ...sessionData, tokenType };
           next();
         }).catch(err => {
+          console.error('Error getting session', err);
           res.status(401).send({error: 'Error getting session.'});
         });
       } else {

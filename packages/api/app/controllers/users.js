@@ -1,14 +1,11 @@
 module.exports = function initUserController({users, gitea}) {
   async function updateUser(userId, user) {
-    const resp = await gitea.createUser({
+    const giteaUser = await gitea.createUser({
       username: user.username,
       email: user.email,
     });
-    user.giteaToken = resp.token.token;
+    user.giteaUserId = giteaUser.id;
     await users.updateUser(userId, user);
-    if (!resp.ok) {
-      throw new Error('Error creating gitea user: ' + JSON.stringify(resp));
-    }
   }
 
   function handleGetUser(req, res) {

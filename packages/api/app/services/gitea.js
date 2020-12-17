@@ -46,30 +46,29 @@ async function createUser({username}) {
   if (!resp.ok) {
     throw new Error('Error creating gitea user: ' + JSON.stringify(user));
   }
-  const tokenResp = await fetch(`${baseUrl}/api/v1/users/${username}/tokens`, {
+  return user;
+}
+
+async function createProject({name, username}) {
+  const resp = await fetch(`${baseUrl}/api/v1/user/repos`, {
     method: 'POST',
     headers: {
-      ...headers,
-      Authorization: basicAuth(username, password),
+      ...adminHeaders,
+      Sudo: username,
     },
     body: JSON.stringify({
-      name: 'Resources.co app',
+      name,
     }),
   });
-  const token = await tokenResp.json();
-  if (!tokenResp.ok) {
-    throw new Error('Error creating gitea token: ' + tokenResp.status + ", " + JSON.stringify(token));
+  if (!resp.ok) {
+    const respBody = await resp.json();
+    throw new Error('Error creating project' + JSON.stringify(respBody));
   }
-  return {
-    ok: resp.ok,
-    user,
-    token: {
-      ...token,
-      token: token.sha1,
-    },
-  };
+  const project = await resp.json();
+  return project;
 }
 
 module.exports = {
   createUser,
+  createProject,
 };

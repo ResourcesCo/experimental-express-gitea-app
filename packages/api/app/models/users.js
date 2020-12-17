@@ -2,7 +2,7 @@ const {v4: uuidv4} = require('uuid');
 const {randomBytes} = require('crypto');
 
 module.exports = function users({db}) {
-	function formatUser(row, {includeCredentials} = {includeCredentials: false}) {
+	function formatUser(row) {
 		return {
 			id: row.id,
 			email: row.email,
@@ -14,7 +14,7 @@ module.exports = function users({db}) {
 			lastName: row.last_name,
 			signedUpAt: row.signed_up_at,
 			acceptedTermsAt: row.accepted_terms_at,
-			...(includeCredentials && {giteaToken: row.gitea_token}),
+			giteaUserId: row.gitea_user_id,
 		};
 	}
 
@@ -76,20 +76,23 @@ module.exports = function users({db}) {
 		},
 		async getUserSession({userId, sessionId}) {
 			const result = await db.query(
-				'select * from user_sessions where id = $1 and user_id = $2', [sessionId, userId]
+				`select user_sessions.id, user_sessions.user_id, user_sessions.active, user_sessions.expires_at, users.username, users.gitea_user_id
+				from user_sessions, users
+				where user_sessions.id = $1 and users.id = $2 and user_sessions.user_id = users.id`,
+				[sessionId, userId]
 			);
 			if (result.rows.length === 1) {
-				const {id, user_id, active, expires_at} = result.rows[0];
+				const {id, user_id, active, expires_at, username, gitea_user_id} = result.rows[0];
 				if (active && new Date() < expires_at) {
-					return { userId: user_id, sessionId: id, expiresAt: expires_at };
+					return { userId: user_id, sessionId: id, expiresAt: expires_at, username, giteaUserId: gitea_user_id };
 				}
 			}
 		},
-		async getUser(id, {includeCredentials} = {includeCredentials: false}) {
+		async getUser(id) {
 			const result = await db.query('select * from users where id = $1', [id]);
 			if (result.rows.length === 1) {
 				const row = result.rows[0];
-				return formatUser(row, {includeCredentials});
+				return formatUser(row);
 			} else {
 				throw new Error('Error getting user profile');
 			}
@@ -146,9 +149,9 @@ module.exports = function users({db}) {
 				params.push(updates.acceptedTermsAt);
 				sqlParams.push(`accepted_terms_at = $${params.length}`);
 			}
-			if ('giteaToken' in updates) {
-				params.push(updates.giteaToken);
-				sqlParams.push(`gitea_token = $${params.length}`);
+			if ('giteaUserId' in updates) {
+				params.push(updates.giteaUserId);
+				sqlParams.push(`gitea_user_id = $${params.length}`);
 			}
 			if (params.length > 0) {
 				params.push(id);

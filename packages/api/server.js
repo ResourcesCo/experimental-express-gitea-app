@@ -11,6 +11,7 @@ const {sessionLoader, authenticate} = require('./app/controllers/auth');
 const initSessionRoutes = require('./app/controllers/sessions');
 const initTokenRoutes = require('./app/controllers/tokens');
 const initUsersController = require('./app/controllers/users');
+const initProjectsController = require('./app/controllers/projects');
 
 const db = new Pool({
 	connectionString: process.env.NODE_DATABASE_URL
@@ -18,6 +19,7 @@ const db = new Pool({
 
 const users = initUsers({db});
 const usersController = initUsersController({users, gitea});
+const projectsController = initProjectsController({gitea});
 const app = express();
 
 app.use(morgan('tiny'));
@@ -36,6 +38,7 @@ app.use(sessionLoader({users, tokens}));
 initSessionRoutes({app, authenticate, db, users, tokens});
 initTokenRoutes({app, authenticate, tokens});
 usersController.initRoutes({app, authenticate});
+projectsController.initRoutes({app, authenticate});
 
 async function run() {
 	app.listen(process.env.PORT, () => {

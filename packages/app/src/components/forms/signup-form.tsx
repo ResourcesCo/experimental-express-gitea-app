@@ -3,13 +3,13 @@ import { DialogContentText, TextField, FormControlLabel, Checkbox } from '@mater
 import { Alert } from '@material-ui/lab';
 import User from '../../models/user';
 
-interface DialogProps {
+interface SignupFormProps {
   user: User;
   error?: string;
   onChange: (user: User) => void;
 }
 
-const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) => {
+const SignupForm: FunctionComponent<SignupFormProps> = ({user, error, onChange}) => {
   return (
     <>
       {error && <Alert severity="error">{error}</Alert>}
@@ -69,4 +69,4 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
   )
 }
 
-export default SignupDialog;
+export default SignupForm;
