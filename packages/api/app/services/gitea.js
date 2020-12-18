@@ -49,26 +49,48 @@ async function createUser({username}) {
   return user;
 }
 
-async function createProject({name, username}) {
-  const resp = await fetch(`${baseUrl}/api/v1/user/repos`, {
-    method: 'POST',
-    headers: {
-      ...adminHeaders,
-      Sudo: username,
-    },
-    body: JSON.stringify({
-      name,
-    }),
-  });
-  if (!resp.ok) {
-    const respBody = await resp.json();
-    throw new Error('Error creating project' + JSON.stringify(respBody));
+class Client {
+  constructor(username) {
+    this.username = username;
   }
-  const project = await resp.json();
-  return project;
+
+  async request(url, method, body = undefined) {
+    const resp = await fetch(`${baseUrl}/api/v1${url}`, {
+      method,
+      headers: {
+        ...adminHeaders,
+        Sudo: this.username,
+      },
+      ...(body && {body: JSON.stringify(body)}),
+    });
+    let respBody
+    try {
+      respBody = await resp.text();
+    } catch (err) {
+      respBody = "";
+    }
+    try {
+      respBody = JSON.parse(respBody);
+    } catch (err) {
+      // ignore
+    }
+    if (!resp.ok) {
+      throw new Error(`Error making request to gitea at '${url}' (${resp.status}): ${JSON.stringify(respBody)}`);
+    }
+    return respBody;
+  }
+
+  async createProject({name}) {
+    const project = await this.request('/user/repos', 'POST', {
+      name,
+      default_branch: 'main',
+      auto_init: true,
+    });
+    return project;
+  }
 }
 
 module.exports = {
   createUser,
-  createProject,
+  Client,
 };

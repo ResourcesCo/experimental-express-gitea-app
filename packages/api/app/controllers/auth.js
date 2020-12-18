@@ -1,3 +1,5 @@
+const Session = require('../models/session');
+
 exports.sessionLoader = function sessionLoader({users, tokens}) {
   return function sessionLoaderHandler(req, res, next) {
     if (req.header('Authorization')) {
@@ -9,7 +11,7 @@ exports.sessionLoader = function sessionLoader({users, tokens}) {
       if (tokenData) {
         const {userId, sessionId, tokenType} = tokenData;
         users.getUserSession({userId, sessionId}).then(sessionData => {
-          req.session = { ...sessionData, tokenType };
+          req.session = new Session({ ...sessionData, tokenType });
           next();
         }).catch(err => {
           console.error('Error getting session', err);

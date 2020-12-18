@@ -4,6 +4,9 @@ import dynamic from 'next/dynamic'
 const CodeEditor = dynamic(() => import('../../../src/components/controls/code-editor'), {
   ssr: false,
 });
+const Editor = dynamic(() => import('../../../src/components/controls/editor'), {
+  ssr: false,
+});
 
 
 const IndexPage = () => {
@@ -13,6 +16,9 @@ const IndexPage = () => {
     <h1>{username} / {project}</h1>
     <div>
       <CodeEditor value="" />
+    </div>
+    <div>
+      <Editor />
     </div>
   </div>
 };

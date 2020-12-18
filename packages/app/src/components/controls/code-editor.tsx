@@ -14,9 +14,7 @@ const useStyles = makeStyles({
   editor: {
     fontSize: 14,
     fontFamily: 'monospace',
-    '& .cm-s-material .cm-code': {
-      fontWeight: 'bold',
-    }
+    '& .cm-s-material .cm-code': {},
   }
 });
 
