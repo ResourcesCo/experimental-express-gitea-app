@@ -7,7 +7,8 @@ import 'codemirror/mode/gfm/gfm';
 import { makeStyles } from "@material-ui/core/styles";
 
 interface CodeEditorProps {
-  value: string
+  value: string,
+  onChange: (getValue: () => string) => void,
 }
 
 const useStyles = makeStyles({
@@ -18,7 +19,7 @@ const useStyles = makeStyles({
   }
 });
 
-const CodeEditor: React.FunctionComponent<CodeEditorProps> = ({value}) => {
+const CodeEditor: React.FunctionComponent<CodeEditorProps> = ({value, onChange}) => {
   const classes = useStyles();
   return (
     <CodeMirror
@@ -37,6 +38,12 @@ const CodeEditor: React.FunctionComponent<CodeEditorProps> = ({value}) => {
             list3: 'list',
           },
         },
+      }}
+      editorDidMount={editor => {
+        const getValue = () => editor.getValue()
+        editor.on('change', () => {
+          onChange(getValue);
+        });
       }}
     />
   )

@@ -1,46 +1,44 @@
-/// <reference path="./editor.d.ts" />
-
-import React from 'react';
-import ReactIs from 'react-is';
+import { useState } from 'react';
+import { throttle } from 'lodash';
+import CodeEditor from './code-editor';
+import Preview from './preview';
 import { makeStyles } from "@material-ui/core/styles";
-import unified from 'unified';
-import markdown from 'remark-parse';
-import slug from 'remark-slug';
-import toc from 'remark-toc';
-import github from 'remark-github';
-import remark2rehype from 'remark-rehype';
-import highlight from 'rehype-highlight';
-import rehype2react from 'rehype-react';
-
-var processor = unified()
-  .use(markdown)
-  .use(slug)
-  .use(toc)
-  .use(github, {repository: 'rehypejs/rehype-react'})
-  .use(remark2rehype)
-  .use(highlight)
-  .use(rehype2react, {createElement: React.createElement});
-  
-interface EditorProps {
-}
 
 const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+  },
   editor: {
-    backgroundColor: 'green',
+    width: '50%',
+  },
+  preview: {
+    width: '50%',
   }
 });
 
-const Editor: React.FunctionComponent<EditorProps> = ({}) => {
-  const classes = useStyles();
-  const text = `# Markdown Example
+interface EditorProps {
+}
 
-text here`;
-  const result = processor.processSync(text).result;
+const Editor: React.FunctionComponent<EditorProps> = ({}) => {
+  const [value, setValue] = useState('');
+  const classes = useStyles();
+
+  const handleChange = throttle((getValue: () => string) => {
+    setValue(getValue());
+  }, 200)
+
+  console.log({value});
+
   return (
-    <div className={classes.editor}>
-      { ReactIs.isElement(result) ? result : null }
+    <div className={ classes.container }>
+      <div className={ classes.editor }>
+        <CodeEditor value="" onChange={handleChange} />
+      </div>
+      <div className={ classes.preview }>
+        <Preview value={value} />
+      </div>
     </div>
-  )
+  );
 }
 
 export default Editor;

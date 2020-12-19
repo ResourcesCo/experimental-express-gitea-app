@@ -156,6 +156,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
+          "timeout": "10000ms",
           "extra_config": {},
           "host": ["127.0.0.1:3002"],
           "disable_host_sanitize": false
