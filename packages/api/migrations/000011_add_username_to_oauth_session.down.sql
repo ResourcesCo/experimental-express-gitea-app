@@ -1,0 +1,1 @@
+ALTER TABLE oauth_sessions DROP COLUMN provider_username;

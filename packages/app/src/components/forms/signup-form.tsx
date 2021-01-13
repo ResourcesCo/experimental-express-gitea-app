@@ -3,19 +3,28 @@ import { DialogContentText, TextField, FormControlLabel, Checkbox } from '@mater
 import { Alert } from '@material-ui/lab';
 import User from '../../models/user';
 
-interface DialogProps {
+interface SignupFormProps {
   user: User;
   error?: string;
   onChange: (user: User) => void;
 }
 
-const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) => {
+const SignupForm: FunctionComponent<SignupFormProps> = ({user, error, onChange}) => {
   return (
     <>
       {error && <Alert severity="error">{error}</Alert>}
       <DialogContentText>
         Welcome! To complete signup, please enter some information:
       </DialogContentText>
+      <TextField
+        margin="dense"
+        id="username"
+        label="Username"
+        value={user.username}
+        onChange={({target: {value}}) => onChange({...user, username: value})}
+        required
+        fullWidth
+      />
       <TextField
         margin="dense"
         id="email"
@@ -60,4 +69,4 @@ const SignupDialog: FunctionComponent<DialogProps> = ({user, error, onChange}) =
   )
 }
 
-export default SignupDialog;
+export default SignupForm;

@@ -12,6 +12,6 @@ fi
 
 envsubst < /etc/templates/app.ini > ${GITEA_CUSTOM}/conf/app.ini
 gitea migrate
-gitea admin user create --username $GITEA_USERNAME --password $GITEA_PASSWORD --email $GITEA_EMAIL --must-change-password=false
+gitea admin create-user --username $GITEA_ADMIN_USERNAME --password $GITEA_ADMIN_PASSWORD --email $GITEA_ADMIN_EMAIL --admin --must-change-password=false
 
 exec entrypoint "$@"
