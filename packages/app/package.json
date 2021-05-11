@@ -16,7 +16,7 @@
     "codemirror-one-dark-theme": "^1.1.1",
     "haikunator": "^2.1.2",
     "highlight.js": "^10.4.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "material-ui-popup-state": "^1.7.0",
     "next": "^10.0.3",
     "react": "^16.12.0",
